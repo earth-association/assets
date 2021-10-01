@@ -31,6 +31,14 @@ export const principal_id_to_address_buffer = (pid) => {
   ]);
 };
 
+export const getTokenImageExt = (canisterId: string, tokenid: string) =>
+  `https://${canisterId}.raw.ic0.app/?tokenid=${tokenid}`;
+
+export const getTokenThumbnailImageExt = (
+  canisterId: string,
+  tokenid: string
+) => `https://${canisterId}.raw.ic0.app/?type=thumbnail&tokenid=${tokenid}`;
+
 export const getNFTsFromCanisterExt = async (
   canisterId: string,
   accountId: string
@@ -84,8 +92,8 @@ export const getNFTsFromCanisterExt = async (
   });
 };
 
-export const principal_to_address = (princial) =>
-  address_to_hex(principal_id_to_address_buffer(princial));
+export const principal_to_address = (principal) =>
+  address_to_hex(principal_id_to_address_buffer(principal));
 
 export const getTokenIdentifier = (
   canisterId: string,
@@ -200,4 +208,20 @@ export const listNFTsExt = async (
     status = 'SUCCESS';
   }
   return status;
+};
+
+export const isHex = (str) => {
+  return Boolean(str.match(/^[0-9a-f]+$/i));
+};
+
+export const validateAddress = (a) => {
+  return isHex(a) && a.length === 64;
+};
+
+export const validatePrincipal = (p) => {
+  try {
+    return p === Principal.fromText(p).toText();
+  } catch (e) {
+    return false;
+  }
 };
