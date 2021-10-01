@@ -71,11 +71,11 @@ export const getNFTsFromCanisterExt = async (
 
   return tokensOK.map((token) => {
     const tokenIndex = parseInt(token[0]);
-    const info = { seller: '', price: BigInt(0), locked: [] };
+    const info = { seller: '', price: BigInt(0).toString(), locked: [] };
     let forSale = false;
     if (token[1][0] !== undefined) {
       info.seller = token[1][0]?.seller.toText();
-      info.price = BigInt(token[1][0]?.price);
+      info.price = BigInt(token[1][0]?.price).toString();
       info.locked = token[1][0]?.locked;
       forSale = true;
     }
