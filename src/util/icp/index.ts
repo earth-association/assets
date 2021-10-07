@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { sha224 } from '@dfinity/rosetta-client/lib/hash';
 import fetch from 'cross-fetch';
@@ -31,6 +32,14 @@ export const principal_id_to_address_buffer = (pid) => {
   ]);
 };
 
+export const getTokenImageExt = (canisterId: string, tokenid: string) =>
+  `https://${canisterId}.raw.ic0.app/?tokenid=${tokenid}`;
+
+export const getTokenThumbnailImageExt = (
+  canisterId: string,
+  tokenid: string
+) => `https://${canisterId}.raw.ic0.app/?type=thumbnail&tokenid=${tokenid}`;
+
 export const getNFTsFromCanisterExt = async (
   canisterId: string,
   accountId: string
@@ -63,11 +72,11 @@ export const getNFTsFromCanisterExt = async (
 
   return tokensOK.map((token) => {
     const tokenIndex = parseInt(token[0]);
-    const info = { seller: '', price: BigInt(0), locked: [] };
+    const info = { seller: '', price: BigInt(0).toString(), locked: [] };
     let forSale = false;
     if (token[1][0] !== undefined) {
       info.seller = token[1][0]?.seller.toText();
-      info.price = BigInt(token[1][0]?.price);
+      info.price = BigInt(token[1][0]?.price).toString();
       info.locked = token[1][0]?.locked;
       forSale = true;
     }
@@ -84,8 +93,8 @@ export const getNFTsFromCanisterExt = async (
   });
 };
 
-export const principal_to_address = (princial) =>
-  address_to_hex(principal_id_to_address_buffer(princial));
+export const principal_to_address = (principal) =>
+  address_to_hex(principal_id_to_address_buffer(principal));
 
 export const getTokenIdentifier = (
   canisterId: string,
@@ -106,8 +115,6 @@ export const transferNFTsExt = async (
   toAccountId: string,
   tokenIndex: string
 ) => {
-  //const fetchWallet = await createWallet(TEST_MNE_1, 'ICP');
-
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_HOST,
@@ -156,14 +163,13 @@ export const transferNFTsExt = async (
   return status;
 };
 
+// Price in xx ICP and 0 to unlist
 export const listNFTsExt = async (
   canisterId: string,
   identity: Identity,
   tokenIndex: string,
   price: number
 ) => {
-  //const fetchWallet = await createWallet(TEST_MNE_1, 'ICP');
-
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_HOST,
@@ -186,7 +192,7 @@ export const listNFTsExt = async (
   try {
     status = await API.list({
       token,
-      price: [Math.floor(price * 100000000)],
+      price: price === 0 ? [] : [Math.floor(price * 100000000)],
       from_subaccount: [getSubAccountArray(0)],
     });
   } catch (error) {
@@ -200,4 +206,20 @@ export const listNFTsExt = async (
     status = 'SUCCESS';
   }
   return status;
+};
+
+export const isHex = (str) => {
+  return Boolean(str.match(/^[0-9a-f]+$/i));
+};
+
+export const validateAddress = (a) => {
+  return isHex(a) && a.length === 64;
+};
+
+export const validatePrincipal = (p) => {
+  try {
+    return p === Principal.fromText(p).toText();
+  } catch (e) {
+    return false;
+  }
 };

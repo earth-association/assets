@@ -15,7 +15,7 @@ test('get tokens for a EXT type canister for a user', async (t) => {
       info: {
         seller:
           'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe',
-        price: BigInt(18000000000),
+        price: BigInt(18000000000).toString(),
         locked: [],
       },
       tokenIndex: 2112,
@@ -60,7 +60,7 @@ test('list not owned NFT of a canister should give UNAUTHORISED status', async (
       'owuqd-dyaaa-aaaah-qapxq-cai',
       walletObj.identity,
       '2112',
-      4
+      180
     );
 
     t.is(status, 'UNAUTHORISED');
