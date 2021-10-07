@@ -60,7 +60,7 @@ test('list not owned NFT of a canister should give UNAUTHORISED status', async (
       'owuqd-dyaaa-aaaah-qapxq-cai',
       walletObj.identity,
       '2112',
-      4
+      180
     );
 
     t.is(status, 'UNAUTHORISED');
