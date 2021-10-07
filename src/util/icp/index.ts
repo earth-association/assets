@@ -163,12 +163,13 @@ export const transferNFTsExt = async (
   return status;
 };
 
-// Price in xx ICP and 0 to unlist
+// Price in xx ICP and unlist == true or price is zero to unlist
 export const listNFTsExt = async (
   canisterId: string,
   identity: Identity,
   tokenIndex: string,
-  price: number
+  price: number,
+  unlist?: boolean
 ) => {
   const agent = await Promise.resolve(
     new HttpAgent({
@@ -192,7 +193,7 @@ export const listNFTsExt = async (
   try {
     status = await API.list({
       token,
-      price: price === 0 ? [] : [Math.floor(price * 100000000)],
+      price: price === 0 || unlist ? [] : [Math.floor(price * 100000000)],
       from_subaccount: [getSubAccountArray(0)],
     });
   } catch (error) {
