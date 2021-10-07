@@ -115,7 +115,6 @@ export const transferNFTsExt = async (
   toAccountId: string,
   tokenIndex: string
 ) => {
-
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_HOST,
