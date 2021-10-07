@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Actor, HttpAgent } from '@dfinity/agent';
 import { sha224 } from '@dfinity/rosetta-client/lib/hash';
 import fetch from 'cross-fetch';
@@ -114,7 +115,6 @@ export const transferNFTsExt = async (
   toAccountId: string,
   tokenIndex: string
 ) => {
-  //const fetchWallet = await createWallet(TEST_MNE_1, 'ICP');
 
   const agent = await Promise.resolve(
     new HttpAgent({
