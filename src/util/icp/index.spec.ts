@@ -1,26 +1,29 @@
 import test from 'ava';
 
 import { createWallet } from '@earthwallet/keyring';
-import { getNFTsFromCanisterExt, transferNFTsExt, listNFTsExt } from '.';
+import {
+  getNFTsFromCanisterExt,
+  transferNFTsExt,
+  listNFTsExt,
+  canisterAgentApi,
+} from '.';
 
 test('get tokens for a EXT type canister for a user', async (t) => {
   try {
     const tokens = await getNFTsFromCanisterExt(
-      'owuqd-dyaaa-aaaah-qapxq-cai',
+      'tde7l-3qaaa-aaaah-qansa-cai',
       '0ba1b7b1643929210dc41a8afbe031bd1b5e81dbc8e3b3b64978f5f743f058c3'
     );
 
     t.like(tokens[0], {
-      metadata: [],
       info: {
-        seller:
-          'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe',
-        price: BigInt(18000000000).toString(),
+        seller: '',
+        price: '0',
         locked: [],
       },
-      tokenIndex: 2112,
-      tokenIdentifier: '5pzgh-likor-uwiaa-aaaaa-b4ad5-4aqca-aabba-a',
-      forSale: true,
+      tokenIndex: 16437,
+      tokenIdentifier: 'pewj2-gykor-uwiaa-aaaaa-b4adm-qaqca-aaia2-q',
+      forSale: false,
     });
   } catch (error) {
     console.log(error);
@@ -68,4 +71,10 @@ test('list not owned NFT of a canister should give UNAUTHORISED status', async (
     console.log(error);
     t.truthy(false);
   }
+});
+
+test('call canisterAgentApi and get response', async (t) => {
+  const canisterId = '6ldcj-gyaaa-aaaab-qacsa-cai';
+  const response: any = await canisterAgentApi(canisterId, 'say', 'hello');
+  t.truthy(response === 'hello');
 });

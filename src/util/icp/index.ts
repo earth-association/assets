@@ -5,10 +5,17 @@ import fetch from 'cross-fetch';
 
 export { address_to_hex } from '@dfinity/rosetta-client';
 import { Principal } from '@dfinity/principal';
-import { ICP_HOST } from './constants';
+import { ICP_HOST, DIDJS_ID } from './constants';
 import { default as IDL_EXT } from './candid/ext.did';
+import { default as DIDJS } from './candid/didjs.did';
+
 import { Identity } from '@dfinity/agent';
 import { address_to_hex } from '@dfinity/rosetta-client';
+import { IDL } from '@dfinity/candid';
+
+class CanisterActor extends Actor {
+  [x: string]: (...args: unknown[]) => Promise<unknown>;
+}
 
 const getSubAccountArray = (s) => {
   return Array(28)
@@ -222,5 +229,102 @@ export const validatePrincipal = (p) => {
     return p === Principal.fromText(p).toText();
   } catch (e) {
     return false;
+  }
+};
+
+export const candidToJs = async (candid: string) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(DIDJS, {
+    agent,
+    canisterId: DIDJS_ID,
+  });
+  const js: any = await API.did_to_js(candid);
+  if (js === []) {
+    return undefined;
+  }
+  return js[0];
+};
+
+export async function fetchJsFromCanisterId(
+  canisterId: string
+): Promise<undefined | string> {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const common_interface: IDL.InterfaceFactory = ({ IDL }) =>
+    IDL.Service({
+      __get_candid_interface_tmp_hack: IDL.Func([], [IDL.Text], ['query']),
+    });
+  const actor: CanisterActor = Actor.createActor(common_interface, {
+    agent,
+    canisterId,
+  });
+  const candid_source: any = await actor.__get_candid_interface_tmp_hack();
+
+  const js: any = await candidToJs(candid_source);
+  if (js === []) {
+    return undefined;
+  }
+  return js[0];
+}
+
+export const canisterAgentApi = async (
+  canisterId: string,
+  methodName: string,
+  args: any
+) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const requestOptions = {
+    method: 'GET',
+    redirect: 'follow',
+  };
+
+  const data = await fetch(
+    'https://ic.rocks/api/canisters/' + canisterId,
+    requestOptions as RequestInit
+  ).then((response) => response.json());
+
+  const js: string = await candidToJs(data?.module?.candid);
+
+  const dataUri =
+    'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
+  const candid: any = await eval('import("' + dataUri + '")');
+
+  const API = Actor.createActor(candid.default || candid.idlFactory, {
+    agent,
+    canisterId: canisterId,
+  });
+
+  try {
+    const response: any = await API[methodName](args);
+    return response;
+  } catch (error) {
+    console.log(error);
+    return error;
   }
 };
