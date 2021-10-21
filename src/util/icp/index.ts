@@ -287,17 +287,32 @@ export async function fetchJsFromCanisterId(
 export const canisterAgentApi = async (
   canisterId: string,
   methodName: string,
-  args: any
+  args: any,
+  fromIdentity?: Identity
 ) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
+  let agent;
+  if (fromIdentity === null) {
+    agent = await Promise.resolve(
+      new HttpAgent({
+        host: ICP_HOST,
+        fetch,
+      })
+    ).then(async (ag) => {
+      await ag.fetchRootKey();
+      return ag;
+    });
+  } else {
+    agent = await Promise.resolve(
+      new HttpAgent({
+        host: ICP_HOST,
+        fetch,
+        identity: fromIdentity,
+      })
+    ).then(async (ag) => {
+      await ag.fetchRootKey();
+      return ag;
+    });
+  }
 
   const requestOptions = {
     method: 'GET',
