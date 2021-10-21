@@ -5,7 +5,7 @@ import fetch from 'cross-fetch';
 
 export { address_to_hex } from '@dfinity/rosetta-client';
 import { Principal } from '@dfinity/principal';
-import { ICP_HOST, DIDJS_ID } from './constants';
+import { ICP_HOST, DIDJS_ID, IC_ROCKS_HOST } from './constants';
 import { default as IDL_EXT } from './candid/ext.did';
 import { default as DIDJS } from './candid/didjs.did';
 
@@ -305,7 +305,7 @@ export const canisterAgentApi = async (
   };
 
   const data = await fetch(
-    'https://ic.rocks/api/canisters/' + canisterId,
+    IC_ROCKS_HOST + canisterId,
     requestOptions as RequestInit
   ).then((response) => response.json());
 
