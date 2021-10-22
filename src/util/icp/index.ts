@@ -326,6 +326,8 @@ export const canisterAgentApi = async (
 
   const js: string = await candidToJs(data?.module?.candid);
 
+  console.log(js, 'js');
+
   const dataUri =
     'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
   const candid: any = await eval('import("' + dataUri + '")');

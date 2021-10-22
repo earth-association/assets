@@ -78,3 +78,17 @@ test('call canisterAgentApi and get response', async (t) => {
   const response: any = await canisterAgentApi(canisterId, 'say', 'hello');
   t.truthy(response === 'hello');
 });
+
+test('call m7cke-iikor-uwiaa-aaaaa-cmaaq-qaqca-aaek4-a and get expected response', async (t) => {
+  const canisterId = 'ahl3d-xqaaa-aaaaj-qacca-cai';
+  const response: any = await canisterAgentApi(
+    canisterId,
+    'bearer',
+    'm7cke-iikor-uwiaa-aaaaa-cmaaq-qaqca-aaek4-a'
+  );
+  console.log(response);
+  t.truthy(
+    response.ok ===
+      '77bd92d0945ab9f1f7ce92fc00db10994f643c126df4e9f13ffce4a6fe1f2da2'
+  );
+});
