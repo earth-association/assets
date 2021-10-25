@@ -73,22 +73,28 @@ test('list not owned NFT of a canister should give UNAUTHORISED status', async (
   }
 });
 
-test('call canisterAgentApi and get response', async (t) => {
-  const canisterId = '6ldcj-gyaaa-aaaab-qacsa-cai';
-  const response: any = await canisterAgentApi(canisterId, 'say', 'hello');
-  t.truthy(response === 'hello');
-});
-
-test('call m7cke-iikor-uwiaa-aaaaa-cmaaq-qaqca-aaek4-a and get expected response', async (t) => {
-  const canisterId = 'ahl3d-xqaaa-aaaaj-qacca-cai';
+test('call pewj2-gykor-uwiaa-aaaaa-b4adm-qaqca-aaia2-q and get expected response', async (t) => {
+  const canisterId = 'tde7l-3qaaa-aaaah-qansa-cai';
   const response: any = await canisterAgentApi(
     canisterId,
     'bearer',
-    'm7cke-iikor-uwiaa-aaaaa-cmaaq-qaqca-aaek4-a'
+    'pewj2-gykor-uwiaa-aaaaa-b4adm-qaqca-aaia2-q'
   );
-  console.log(response);
-  t.truthy(
-    response.ok ===
-      '77bd92d0945ab9f1f7ce92fc00db10994f643c126df4e9f13ffce4a6fe1f2da2'
+  t.is(
+    response.ok,
+    '0ba1b7b1643929210dc41a8afbe031bd1b5e81dbc8e3b3b64978f5f743f058c3'
   );
+});
+
+test('call ledger canister and get expected response', async (t) => {
+  const canisterId = 'ryjl3-tyaaa-aaaaa-aaaba-cai';
+  const response: any = await canisterAgentApi(
+    canisterId,
+    'account_balance_dfx',
+    {
+      account:
+        '0ba1b7b1643929210dc41a8afbe031bd1b5e81dbc8e3b3b64978f5f743f058c3',
+    }
+  );
+  t.is(response.e8s, BigInt(321020999));
 });

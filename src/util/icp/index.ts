@@ -278,10 +278,33 @@ export async function fetchJsFromCanisterId(
   const candid_source: any = await actor.__get_candid_interface_tmp_hack();
 
   const js: any = await candidToJs(candid_source);
-  if (js === []) {
-    return undefined;
+  return js;
+}
+
+export async function fetchJsFromCanisterIdWithIcRocks(
+  canisterId: string
+): Promise<undefined | string> {
+  const requestOptions = {
+    method: 'GET',
+    redirect: 'follow',
+  };
+
+  const data = await fetch(
+    IC_ROCKS_HOST + `api/canisters/${canisterId}`,
+    requestOptions as RequestInit
+  ).then((response) => response.json());
+
+  let candidString = data?.module?.candid;
+
+  if (candidString === '') {
+    candidString = await fetch(
+      IC_ROCKS_HOST + `/data/interfaces/${data?.principal?.name}.did`,
+      requestOptions as RequestInit
+    ).then((response) => response.text());
   }
-  return js[0];
+  const js: string = await candidToJs(candidString);
+
+  return js;
 }
 
 export const canisterAgentApi = async (
@@ -314,25 +337,13 @@ export const canisterAgentApi = async (
     });
   }
 
-  const requestOptions = {
-    method: 'GET',
-    redirect: 'follow',
-  };
-
-  const data = await fetch(
-    IC_ROCKS_HOST + canisterId,
-    requestOptions as RequestInit
-  ).then((response) => response.json());
-
-  const js: string = await candidToJs(data?.module?.candid);
-
-  console.log(js, 'js');
+  const js = await fetchJsFromCanisterIdWithIcRocks(canisterId);
 
   const dataUri =
     'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
   const candid: any = await eval('import("' + dataUri + '")');
 
-  const API = Actor.createActor(candid.default || candid.idlFactory, {
+  const API = Actor.createActor(candid?.default || candid?.idlFactory, {
     agent,
     canisterId: canisterId,
   });

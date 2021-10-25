@@ -3,7 +3,7 @@ export const NNS_CANISTER_ID = 'qoctq-giaaa-aaaaa-aaaea-cai';
 export const DIDJS_ID = 'a4gq6-oaaaa-aaaab-qaa4q-cai';
 export const ICP_HOST = 'https://ic0.app';
 
-export const IC_ROCKS_HOST = 'https://ic.rocks/api/canisters/';
+export const IC_ROCKS_HOST = 'https://ic.rocks/';
 
 export const ICP_NETWORK_IDENTIFIER = {
   blockchain: 'Internet Computer',
