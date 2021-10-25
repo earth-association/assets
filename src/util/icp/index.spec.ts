@@ -73,16 +73,12 @@ test('list not owned NFT of a canister should give UNAUTHORISED status', async (
   }
 });
 
-test('call pewj2-gykor-uwiaa-aaaaa-b4adm-qaqca-aaia2-q and get expected response', async (t) => {
+test('call tde7l-3qaaa-aaaah-qansa-cai with no args and get expected response', async (t) => {
   const canisterId = 'tde7l-3qaaa-aaaah-qansa-cai';
-  const response: any = await canisterAgentApi(
-    canisterId,
-    'bearer',
-    'pewj2-gykor-uwiaa-aaaaa-b4adm-qaqca-aaia2-q'
-  );
+  const response: any = await canisterAgentApi(canisterId, 'getMinter');
   t.is(
-    response.ok,
-    '0ba1b7b1643929210dc41a8afbe031bd1b5e81dbc8e3b3b64978f5f743f058c3'
+    response.toText(),
+    'sensj-ihxp6-tyvl7-7zwvj-fr42h-7ojjp-n7kxk-z6tvo-vxykp-umhfk-wqe'
   );
 });
 

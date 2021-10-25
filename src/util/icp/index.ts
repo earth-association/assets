@@ -310,7 +310,7 @@ export async function fetchJsFromCanisterIdWithIcRocks(
 export const canisterAgentApi = async (
   canisterId: string,
   methodName: string,
-  args: any,
+  args?: any,
   fromIdentity?: Identity
 ) => {
   let agent;
@@ -349,7 +349,12 @@ export const canisterAgentApi = async (
   });
 
   try {
-    const response: any = await API[methodName](args);
+    let response: any;
+    if (args === undefined) {
+      response = await API[methodName]();
+    } else {
+      response = await API[methodName](args);
+    }
     return response;
   } catch (error) {
     console.log(error);
