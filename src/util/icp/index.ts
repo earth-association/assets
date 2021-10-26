@@ -232,6 +232,10 @@ export const validatePrincipal = (p) => {
   }
 };
 
+export const principalTextoAddress = (p: string) => {
+  return principal_to_address(Principal.fromText(p));
+};
+
 export const candidToJs = async (candid: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({

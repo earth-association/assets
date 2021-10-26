@@ -6,6 +6,7 @@ import {
   transferNFTsExt,
   listNFTsExt,
   canisterAgentApi,
+  principalTextoAddress,
 } from '.';
 
 test('get tokens for a EXT type canister for a user', async (t) => {
@@ -93,4 +94,14 @@ test('call ledger canister and get expected response', async (t) => {
     }
   );
   t.is(response.e8s, BigInt(321020999));
+});
+
+test('call principalTextoAddress get expected response', async (t) => {
+  const principal =
+    'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe';
+
+  t.is(
+    principalTextoAddress(principal),
+    '0ba1b7b1643929210dc41a8afbe031bd1b5e81dbc8e3b3b64978f5f743f058c3'
+  );
 });
