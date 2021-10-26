@@ -12,6 +12,7 @@ import { default as DIDJS } from './candid/didjs.did';
 import { Identity } from '@dfinity/agent';
 import { address_to_hex } from '@dfinity/rosetta-client';
 import { IDL } from '@dfinity/candid';
+import NNS_CANISTERS from './candid/nns';
 
 class CanisterActor extends Actor {
   [x: string]: (...args: unknown[]) => Promise<unknown>;
@@ -261,25 +262,31 @@ export const candidToJs = async (candid: string) => {
 export async function fetchJsFromCanisterId(
   canisterId: string
 ): Promise<undefined | string> {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
+  let candid_source: any;
 
-  const common_interface: IDL.InterfaceFactory = ({ IDL }) =>
-    IDL.Service({
-      __get_candid_interface_tmp_hack: IDL.Func([], [IDL.Text], ['query']),
+  if (canisterId in NNS_CANISTERS) {
+    return null;
+  } else {
+    const agent = await Promise.resolve(
+      new HttpAgent({
+        host: ICP_HOST,
+        fetch,
+      })
+    ).then(async (ag) => {
+      await ag.fetchRootKey();
+      return ag;
     });
-  const actor: CanisterActor = Actor.createActor(common_interface, {
-    agent,
-    canisterId,
-  });
-  const candid_source: any = await actor.__get_candid_interface_tmp_hack();
+
+    const common_interface: IDL.InterfaceFactory = ({ IDL }) =>
+      IDL.Service({
+        __get_candid_interface_tmp_hack: IDL.Func([], [IDL.Text], ['query']),
+      });
+    const actor: CanisterActor = Actor.createActor(common_interface, {
+      agent,
+      canisterId,
+    });
+    candid_source = await actor.__get_candid_interface_tmp_hack();
+  }
 
   const js: any = await candidToJs(candid_source);
   return js;
@@ -341,11 +348,16 @@ export const canisterAgentApi = async (
     });
   }
 
-  const js = await fetchJsFromCanisterIdWithIcRocks(canisterId);
+  let candid: any;
 
-  const dataUri =
-    'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
-  const candid: any = await eval('import("' + dataUri + '")');
+  if (!(canisterId in NNS_CANISTERS)) {
+    const js = await fetchJsFromCanisterId(canisterId);
+    const dataUri =
+      'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
+    candid = await eval('import("' + dataUri + '")');
+  } else {
+    candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+  }
 
   const API = Actor.createActor(candid?.default || candid?.idlFactory, {
     agent,
