@@ -374,6 +374,6 @@ export const canisterAgentApi = async (
     return response;
   } catch (error) {
     console.log(error);
-    return error;
+    return { type: 'error', message: error?.message };
   }
 };
