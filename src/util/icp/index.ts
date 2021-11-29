@@ -377,3 +377,22 @@ export const canisterAgentApi = async (
     return { type: 'error', message: error?.message };
   }
 };
+
+export const decodeTokenId = (tid: string) => {
+  const toHexString = (byteArray) => {
+    return Array.from(byteArray, function (byte: any) {
+      return ('0' + (byte & 0xff).toString(16)).slice(-2);
+    }).join('');
+  };
+  const p = [...Principal.fromText(tid).toUint8Array()];
+  const padding = p.splice(0, 4);
+  if (toHexString(padding) !== toHexString(Buffer.from('\x0Atid'))) {
+    return {
+      index: 0,
+      canister: tid,
+      token: getTokenIdentifier(tid, 0),
+    };
+  } else {
+    return null;
+  }
+};
