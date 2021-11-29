@@ -384,6 +384,13 @@ export const decodeTokenId = (tid: string) => {
       return ('0' + (byte & 0xff).toString(16)).slice(-2);
     }).join('');
   };
+  const from32bits = (ba) => {
+    let value;
+    for (let i = 0; i < 4; i++) {
+      value = (value << 8) | ba[i];
+    }
+    return value;
+  };
   const p = [...Principal.fromText(tid).toUint8Array()];
   const padding = p.splice(0, 4);
   if (toHexString(padding) !== toHexString(Buffer.from('\x0Atid'))) {
@@ -393,6 +400,11 @@ export const decodeTokenId = (tid: string) => {
       token: getTokenIdentifier(tid, 0),
     };
   } else {
-    return null;
+    return {
+      index: from32bits(p.splice(-4)),
+      // @ts-ignore
+      canister: Principal.fromUint8Array(p as Uint8Array).toText(),
+      token: tid,
+    };
   }
 };

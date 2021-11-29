@@ -8,6 +8,7 @@ import {
   canisterAgentApi,
   principalTextoAddress,
   getTokenIdentifier,
+  decodeTokenId,
 } from '.';
 
 test('get tokens for a EXT type canister for a user', async (t) => {
@@ -119,4 +120,14 @@ test('call getTokenIdentifier get expected response', async (t) => {
   const tokenId = getTokenIdentifier(canisterId, 0);
 
   t.is(tokenId, 'rghka-lykor-uwiaa-aaaaa-aaaaa-maqca-aaaaa-a');
+});
+
+test('call decodeTokenId get expected response', async (t) => {
+  const tokenId = decodeTokenId('rghka-lykor-uwiaa-aaaaa-aaaaa-maqca-aaaaa-a');
+
+  t.like(tokenId, {
+    index: 0,
+    canister: 'r7inp-6aaaa-aaaaa-aaabq-cai',
+    token: 'rghka-lykor-uwiaa-aaaaa-aaaaa-maqca-aaaaa-a',
+  });
 });
