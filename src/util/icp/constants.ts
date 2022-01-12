@@ -3,6 +3,8 @@ export const NNS_CANISTER_ID = 'qoctq-giaaa-aaaaa-aaaea-cai';
 export const DIDJS_ID = 'a4gq6-oaaaa-aaaab-qaa4q-cai';
 export const ICP_HOST = 'https://ic0.app';
 
+export const ICP_TESTNET_HOST = 'https://www.testnet.infinityswap.one';
+
 export const IC_ROCKS_HOST = 'https://ic.rocks/';
 
 export const ICP_NETWORK_IDENTIFIER = {

@@ -5,9 +5,18 @@ import fetch from 'cross-fetch';
 
 export { address_to_hex } from '@dfinity/rosetta-client';
 import { Principal } from '@dfinity/principal';
-import { ICP_HOST, DIDJS_ID, IC_ROCKS_HOST } from './constants';
+import {
+  ICP_HOST,
+  DIDJS_ID,
+  IC_ROCKS_HOST,
+  ICP_TESTNET_HOST,
+} from './constants';
 import { default as IDL_EXT } from './candid/ext.did';
 import { default as DIDJS } from './candid/didjs.did';
+import { idlFactory as TOKEN_FACTORY } from './candid/token_factory.did';
+import { idlFactory as TOKEN } from './candid/token.did';
+import { idlFactory as PAIR } from './candid/pair.did';
+import { idlFactory as PAIR_FACTORY } from './candid/pair_factory.did';
 
 import { Identity } from '@dfinity/agent';
 import { address_to_hex } from '@dfinity/rosetta-client';
@@ -407,4 +416,369 @@ export const decodeTokenId = (tid: string) => {
       token: tid,
     };
   }
+};
+
+export const createToken = async (token: string) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN_FACTORY, {
+    agent: agent,
+    canisterId: 'q3fc5-haaaa-aaaaa-aaahq-cai',
+  });
+
+  let response: any;
+  const p = 'tjpnz-kfh3h-es2ok-k7wp4-ieiad-qvntd-hd4k3-zxdlf-tg3of-l37zo-7ae';
+  try {
+    response = await API.create_token({
+      logo: '',
+      fee: 1,
+      name: token,
+      symbol: token,
+      decimals: 8,
+      totalSupply: 1000000000,
+      owner: Principal.fromText(p),
+      feeTo: Principal.fromText(p),
+    });
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+  console.log(response);
+
+  return response;
+};
+
+export const getToken = async (token: string) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN_FACTORY, {
+    agent: agent,
+    canisterId: 'q3fc5-haaaa-aaaaa-aaahq-cai',
+  });
+
+  let response: any;
+  try {
+    response = await API.get_token(token);
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+  console.log(response[0]?.toText());
+  return response[0]?.toText();
+};
+
+export const owner = async (canisterId: string) => {
+  const p = 'aaaaa-aa';
+
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN, {
+    agent: agent,
+    canisterId,
+  });
+
+  console.log(Principal.fromText(p), 23);
+  let response: any;
+  try {
+    response = await API.owner();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response?.toText());
+
+  return response?.toText();
+};
+
+export const approve = async (identity: any, canisterId: string, p: string) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+      identity,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN, {
+    agent: agent,
+    canisterId,
+  });
+
+  let response: any;
+  try {
+    response = await API.approve(Principal.fromText(p), 10000);
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response);
+
+  return response;
+};
+/* 
+export const stats = async () => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR, {
+    agent: agent,
+    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+  });
+
+  let response: any;
+  try {
+    response = await API.stats();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response, 'stats');
+
+  return response;
+}; */
+
+export const get_all = async () => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR_FACTORY, {
+    agent: agent,
+    canisterId: 'q4eej-kyaaa-aaaaa-aaaha-cai',
+  });
+
+  let response: any;
+  try {
+    response = await API.get_all();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(
+    response.length,
+    response.map((token) => token.toText()),
+    'get_all'
+  );
+
+  return response.map((token) => token.toText());
+};
+
+export const create_pair = async () => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR_FACTORY, {
+    agent: agent,
+    canisterId: 'q4eej-kyaaa-aaaaa-aaaha-cai',
+  });
+
+  let response: any;
+  const pair1 = '4rsvd-faaaa-aaaaa-aablq-cai';
+  const pair2 = '544rn-kiaaa-aaaaa-aabma-cai';
+  try {
+    response = await API.create_pair(
+      Principal.fromText(pair1),
+      Principal.fromText(pair2)
+    );
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response, 'create_pair');
+
+  return response;
+};
+
+export const get_pair = async () => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR_FACTORY, {
+    agent: agent,
+    canisterId: 'q4eej-kyaaa-aaaaa-aaaha-cai',
+  });
+
+  let response: any;
+  const pair1 = '4rsvd-faaaa-aaaaa-aablq-cai';
+  const pair2 = '544rn-kiaaa-aaaaa-aabma-cai';
+  try {
+    response = await API.get_pair(
+      Principal.fromText(pair1),
+      Principal.fromText(pair2)
+    );
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response, 'get_pair');
+
+  console.log(response[0]?.toText());
+  return response[0]?.toText();
+};
+
+export const get_reserves = async () => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR, {
+    agent: agent,
+    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+  });
+
+  let response: any;
+
+  try {
+    response = await API.get_reserves();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response, 'get_reserves');
+
+  console.log(response);
+  return response;
+};
+
+export const transfer_from = async (
+  token: string,
+  from: string,
+  amount: number,
+  identity: any
+) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+      identity,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR, {
+    agent: agent,
+    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+  });
+
+  let response: any;
+
+  try {
+    response = await API.transfer_from(
+      Principal.fromText(token),
+      Principal.fromText(from),
+      amount
+    );
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response, 'transfer_from');
+  return response;
+};
+
+export const mint = async (identity: any) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+      identity,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(PAIR, {
+    agent: agent,
+    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+  });
+
+  let response: any;
+
+  try {
+    response = await API.mint();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  const response2 = await API.get_total_supply();
+  const get_transit = await API.get_transit();
+
+  console.log(response, 'mint');
+
+  console.log(response2, 'get_total_supply');
+  console.log(get_transit, 'get_transit');
+
+  return response;
 };
