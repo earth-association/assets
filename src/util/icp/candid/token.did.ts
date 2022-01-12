@@ -10,9 +10,13 @@ export const idlFactory = ({ IDL }) => {
     feeTo: IDL.Principal,
   });
   const TxError = IDL.Variant({
+    AlreadyNotified: IDL.Null,
     InsufficientAllowance: IDL.Null,
+    FeeExceededLimit: IDL.Null,
     InsufficientBalance: IDL.Null,
     Unauthorized: IDL.Null,
+    NotificationFailed: IDL.Null,
+    TransactionDoesNotExist: IDL.Null,
     AmountTooSmall: IDL.Null,
   });
   const Result = IDL.Variant({ Ok: IDL.Nat, Err: TxError });
@@ -112,6 +116,7 @@ export const idlFactory = ({ IDL }) => {
     logo: IDL.Func([], [IDL.Text], ['query']),
     mint: IDL.Func([IDL.Principal, IDL.Nat], [Result], []),
     name: IDL.Func([], [IDL.Text], ['query']),
+    notify: IDL.Func([IDL.Nat], [Result], []),
     owner: IDL.Func([], [IDL.Principal], ['query']),
     runAuction: IDL.Func([], [Result_1], []),
     setAuctionPeriod: IDL.Func([IDL.Nat64], [Result_3], []),
@@ -123,12 +128,22 @@ export const idlFactory = ({ IDL }) => {
     setOwner: IDL.Func([IDL.Principal], [], []),
     symbol: IDL.Func([], [IDL.Text], ['query']),
     totalSupply: IDL.Func([], [IDL.Nat], ['query']),
-    transfer: IDL.Func([IDL.Principal, IDL.Nat], [Result], []),
+    transfer: IDL.Func(
+      [IDL.Principal, IDL.Nat, IDL.Opt(IDL.Nat)],
+      [Result],
+      []
+    ),
+    transferAndNotify: IDL.Func(
+      [IDL.Principal, IDL.Nat, IDL.Opt(IDL.Nat)],
+      [Result],
+      []
+    ),
     transferFrom: IDL.Func(
       [IDL.Principal, IDL.Principal, IDL.Nat],
       [Result],
       []
     ),
+    transferIncludeFee: IDL.Func([IDL.Principal, IDL.Nat], [Result], []),
   });
 };
 export const init = ({ IDL }) => {

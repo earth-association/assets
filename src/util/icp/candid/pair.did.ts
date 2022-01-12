@@ -1,4 +1,5 @@
 export const idlFactory = ({ IDL }) => {
+  const Standard = IDL.Variant({ Erc20: IDL.Null, Ledger: IDL.Null });
   const CumulativePrice = IDL.Record({
     timestamp: IDL.Nat32,
     price0: IDL.Nat,
@@ -9,6 +10,23 @@ export const idlFactory = ({ IDL }) => {
     reserve0: IDL.Nat,
     reserve1: IDL.Nat,
   });
+  const Operation = IDL.Variant({
+    TransactionReceived: IDL.Null,
+    Burn: IDL.Null,
+    Mint: IDL.Null,
+    Swap: IDL.Null,
+    TransactionSent: IDL.Null,
+  });
+  const TransactionInfo = IDL.Record({
+    id: IDL.Nat,
+    ts: IDL.Nat64,
+    reserves: IDL.Tuple(IDL.Nat, IDL.Nat),
+    in_amount: IDL.Tuple(IDL.Nat, IDL.Nat),
+    operation: Operation,
+    caller: IDL.Principal,
+    out_amount: IDL.Tuple(IDL.Nat, IDL.Nat),
+  });
+  const Result = IDL.Variant({ Ok: IDL.Null, Err: IDL.Text });
   const RollingTotal = IDL.Record({
     token0_volume: IDL.Nat,
     transaction_fees: IDL.Nat,
@@ -32,21 +50,44 @@ export const idlFactory = ({ IDL }) => {
     amount: IDL.Nat,
   });
   return IDL.Service({
-    burn: IDL.Func([], [IDL.Tuple(IDL.Nat, IDL.Nat)], []),
+    burn: IDL.Func(
+      [IDL.Opt(IDL.Tuple(Standard, Standard)), IDL.Opt(IDL.Nat)],
+      [IDL.Tuple(IDL.Nat, IDL.Nat)],
+      []
+    ),
     get_cumulative_price: IDL.Func([], [CumulativePrice], ['query']),
     get_current_price: IDL.Func([], [IDL.Float64, IDL.Float64], ['query']),
+    get_history_length: IDL.Func([], [IDL.Nat], ['query']),
     get_reserves: IDL.Func([], [Reserves], ['query']),
     get_supply: IDL.Func([IDL.Principal], [IDL.Nat], ['query']),
     get_token0: IDL.Func([], [IDL.Principal], ['query']),
     get_token1: IDL.Func([], [IDL.Principal], ['query']),
     get_total_supply: IDL.Func([], [IDL.Nat], ['query']),
+    get_transactions: IDL.Func(
+      [IDL.Nat, IDL.Nat64],
+      [IDL.Vec(TransactionInfo)],
+      ['query']
+    ),
     get_transit: IDL.Func([], [IDL.Tuple(IDL.Nat, IDL.Nat)], ['query']),
     mint: IDL.Func([], [], []),
-    refund_transfer: IDL.Func([], [IDL.Tuple(IDL.Nat, IDL.Nat)], []),
+    receive_icp: IDL.Func(
+      [IDL.Opt(IDL.Vec(IDL.Nat8)), IDL.Nat64, IDL.Principal],
+      [Result],
+      []
+    ),
+    refund_transfer: IDL.Func(
+      [IDL.Opt(IDL.Tuple(Standard, Standard))],
+      [IDL.Tuple(IDL.Nat, IDL.Nat)],
+      []
+    ),
     set_fee_to: IDL.Func([IDL.Principal], [], []),
     skim: IDL.Func([IDL.Principal], [], []),
     stats: IDL.Func([], [PairStats], ['query']),
-    swap: IDL.Func([], [IDL.Tuple(IDL.Nat, IDL.Nat)], []),
+    swap: IDL.Func(
+      [IDL.Opt(IDL.Tuple(Standard, Standard))],
+      [IDL.Tuple(IDL.Nat, IDL.Nat)],
+      []
+    ),
     sync: IDL.Func([], [], []),
     top_up: IDL.Func([], [IDL.Nat64], []),
     transaction_notification: IDL.Func([TransactionNotification], [], []),

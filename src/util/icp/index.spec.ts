@@ -15,16 +15,16 @@ import {
 } from '.'; */
 
 import {
-  owner,
-  //createToken,
-  getToken,
-  approve,
-  //stats,
-  get_all,
-  //create_pair,
-  get_pair,
-  get_reserves,
-  transfer_from,
+  // owner,
+  // //createToken,
+  // getToken,
+  // approve,
+  // //stats,
+  // get_all,
+  // //create_pair,
+  // get_pair,
+  // get_reserves,
+  // transfer_from,
   mint,
 } from '.';
 
@@ -161,7 +161,7 @@ test('call decodeTokenId get expected response', async (t) => {
     t.truthy(false);
   }
 }); */
-
+/* 
 test('get_token', async (t) => {
   try {
     console.log('get_token');
@@ -172,8 +172,8 @@ test('get_token', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-});
-
+}); */
+/* 
 test('owner', async (t) => {
   try {
     console.log('owner');
@@ -187,8 +187,8 @@ test('owner', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-});
-
+}); */
+/* 
 test('approve', async (t) => {
   try {
     console.log('approve');
@@ -216,7 +216,7 @@ test('approve', async (t) => {
     t.truthy(false);
   }
 });
-
+ */
 /* test('stats', async (t) => {
   try {
     const status = await stats();
@@ -227,7 +227,7 @@ test('approve', async (t) => {
     t.truthy(false);
   }
 }); */
-
+/* 
 test('get_all', async (t) => {
   try {
     const status = await get_all();
@@ -237,7 +237,7 @@ test('get_all', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-});
+}); */
 
 /* test('create_pair', async (t) => {
   try {
@@ -249,7 +249,7 @@ test('get_all', async (t) => {
     t.truthy(false);
   }
 }); */
-
+/* 
 test('get_pair', async (t) => {
   try {
     const status = await get_pair();
@@ -259,8 +259,8 @@ test('get_pair', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-});
-
+}); */
+/* 
 test('get_reserves', async (t) => {
   try {
     const status = await get_reserves();
@@ -274,8 +274,8 @@ test('get_reserves', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-});
-
+}); */
+/* 
 test('transfer_from', async (t) => {
   try {
     const seedPhrase =
@@ -303,7 +303,7 @@ test('transfer_from', async (t) => {
     t.truthy(false);
   }
 });
-
+ */
 test('mint', async (t) => {
   try {
     const seedPhrase =

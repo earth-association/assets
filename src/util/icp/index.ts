@@ -598,12 +598,6 @@ export const get_all = async () => {
     response = null;
   }
 
-  console.log(
-    response.length,
-    response.map((token) => token.toText()),
-    'get_all'
-  );
-
   return response.map((token) => token.toText());
 };
 
@@ -766,19 +760,31 @@ export const mint = async (identity: any) => {
   let response: any;
 
   try {
-    response = await API.mint();
+    //response = await API.mint();
   } catch (error) {
     console.log(error);
     response = null;
   }
 
+  const get_history_length = await API.get_history_length();
+  const get_transactions = await API.get_transactions(1, 38);
+
   const response2 = await API.get_total_supply();
   const get_transit = await API.get_transit();
-
+  try {
+    //await API.mint();
+  } catch (error) {
+    console.log();
+  }
+  //const swap = await API.swap();
   console.log(response, 'mint');
+  console.log(get_transactions, 'get_transactions');
 
+  console.log(get_history_length, 'get_history_length');
   console.log(response2, 'get_total_supply');
   console.log(get_transit, 'get_transit');
-
+  //console.log(swap, 'swap');
+  const swap = await API.swap([]);
+  console.log(swap, 'swap');
   return response;
 };
