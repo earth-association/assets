@@ -515,7 +515,11 @@ export const owner = async (canisterId: string) => {
   return response?.toText();
 };
 
-export const approve = async (identity: any, canisterId: string, p: string) => {
+export const approve = async (
+  identity: any,
+  tokenCanisterId: string,
+  pairCanisterId: string
+) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -529,12 +533,12 @@ export const approve = async (identity: any, canisterId: string, p: string) => {
 
   const API = Actor.createActor(TOKEN, {
     agent: agent,
-    canisterId,
+    canisterId: tokenCanisterId,
   });
 
   let response: any;
   try {
-    response = await API.approve(Principal.fromText(p), 10000);
+    response = await API.approve(Principal.fromText(pairCanisterId), 10000);
   } catch (error) {
     console.log(error);
     response = null;
@@ -544,8 +548,8 @@ export const approve = async (identity: any, canisterId: string, p: string) => {
 
   return response;
 };
-/* 
-export const stats = async () => {
+
+export const stats = async (canisterId: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -558,7 +562,7 @@ export const stats = async () => {
 
   const API = Actor.createActor(PAIR, {
     agent: agent,
-    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+    canisterId,
   });
 
   let response: any;
@@ -572,9 +576,9 @@ export const stats = async () => {
   console.log(response, 'stats');
 
   return response;
-}; */
+};
 
-export const get_all = async () => {
+export const get_all = async (canisterId: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -587,7 +591,7 @@ export const get_all = async () => {
 
   const API = Actor.createActor(PAIR_FACTORY, {
     agent: agent,
-    canisterId: 'q4eej-kyaaa-aaaaa-aaaha-cai',
+    canisterId,
   });
 
   let response: any;
@@ -601,7 +605,7 @@ export const get_all = async () => {
   return response.map((token) => token.toText());
 };
 
-export const create_pair = async () => {
+export const create_pair = async (pair1: string, pair2: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -618,8 +622,7 @@ export const create_pair = async () => {
   });
 
   let response: any;
-  const pair1 = '4rsvd-faaaa-aaaaa-aablq-cai';
-  const pair2 = '544rn-kiaaa-aaaaa-aabma-cai';
+
   try {
     response = await API.create_pair(
       Principal.fromText(pair1),
@@ -635,7 +638,7 @@ export const create_pair = async () => {
   return response;
 };
 
-export const get_pair = async () => {
+export const get_pair = async (pair1: string, pair2: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -652,8 +655,7 @@ export const get_pair = async () => {
   });
 
   let response: any;
-  const pair1 = '4rsvd-faaaa-aaaaa-aablq-cai';
-  const pair2 = '544rn-kiaaa-aaaaa-aabma-cai';
+
   try {
     response = await API.get_pair(
       Principal.fromText(pair1),
@@ -664,13 +666,10 @@ export const get_pair = async () => {
     response = null;
   }
 
-  console.log(response, 'get_pair');
-
-  console.log(response[0]?.toText());
   return response[0]?.toText();
 };
 
-export const get_reserves = async () => {
+export const get_reserves = async (canisterId: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -683,7 +682,7 @@ export const get_reserves = async () => {
 
   const API = Actor.createActor(PAIR, {
     agent: agent,
-    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+    canisterId,
   });
 
   let response: any;
@@ -703,9 +702,9 @@ export const get_reserves = async () => {
 
 export const transfer_from = async (
   token: string,
-  from: string,
   amount: number,
-  identity: any
+  identity: any,
+  pairCanisterId: string
 ) => {
   const agent = await Promise.resolve(
     new HttpAgent({
@@ -720,17 +719,13 @@ export const transfer_from = async (
 
   const API = Actor.createActor(PAIR, {
     agent: agent,
-    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+    canisterId: pairCanisterId,
   });
 
   let response: any;
 
   try {
-    response = await API.transfer_from(
-      Principal.fromText(token),
-      Principal.fromText(from),
-      amount
-    );
+    response = await API.transfer_from(Principal.fromText(token), amount);
   } catch (error) {
     console.log(error);
     response = null;
@@ -740,7 +735,7 @@ export const transfer_from = async (
   return response;
 };
 
-export const mint = async (identity: any) => {
+export const mint = async (identity: any, canisterId: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -754,7 +749,7 @@ export const mint = async (identity: any) => {
 
   const API = Actor.createActor(PAIR, {
     agent: agent,
-    canisterId: '535xz-hqaaa-aaaaa-aabmq-cai',
+    canisterId,
   });
 
   let response: any;

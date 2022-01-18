@@ -1,5 +1,4 @@
 export const idlFactory = ({ IDL }) => {
-  const Standard = IDL.Variant({ Erc20: IDL.Null, Ledger: IDL.Null });
   const CumulativePrice = IDL.Record({
     timestamp: IDL.Nat32,
     price0: IDL.Nat,
@@ -50,14 +49,12 @@ export const idlFactory = ({ IDL }) => {
     amount: IDL.Nat,
   });
   return IDL.Service({
-    burn: IDL.Func(
-      [IDL.Opt(IDL.Tuple(Standard, Standard)), IDL.Opt(IDL.Nat)],
-      [IDL.Tuple(IDL.Nat, IDL.Nat)],
-      []
-    ),
+    burn: IDL.Func([IDL.Opt(IDL.Nat)], [IDL.Tuple(IDL.Nat, IDL.Nat)], []),
+    get_cap: IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
     get_cumulative_price: IDL.Func([], [CumulativePrice], ['query']),
     get_current_price: IDL.Func([], [IDL.Float64, IDL.Float64], ['query']),
     get_history_length: IDL.Func([], [IDL.Nat], ['query']),
+    get_owner: IDL.Func([], [IDL.Principal], ['query']),
     get_reserves: IDL.Func([], [Reserves], ['query']),
     get_supply: IDL.Func([IDL.Principal], [IDL.Nat], ['query']),
     get_token0: IDL.Func([], [IDL.Principal], ['query']),
@@ -75,25 +72,24 @@ export const idlFactory = ({ IDL }) => {
       [Result],
       []
     ),
-    refund_transfer: IDL.Func(
-      [IDL.Opt(IDL.Tuple(Standard, Standard))],
-      [IDL.Tuple(IDL.Nat, IDL.Nat)],
-      []
-    ),
+    refund_transfer: IDL.Func([], [IDL.Tuple(IDL.Nat, IDL.Nat)], []),
+    set_cap: IDL.Func([IDL.Opt(IDL.Nat)], [], []),
     set_fee_to: IDL.Func([IDL.Principal], [], []),
+    set_owner: IDL.Func([IDL.Principal], [], []),
     skim: IDL.Func([IDL.Principal], [], []),
     stats: IDL.Func([], [PairStats], ['query']),
-    swap: IDL.Func(
-      [IDL.Opt(IDL.Tuple(Standard, Standard))],
-      [IDL.Tuple(IDL.Nat, IDL.Nat)],
-      []
-    ),
+    swap: IDL.Func([], [IDL.Tuple(IDL.Nat, IDL.Nat)], []),
     sync: IDL.Func([], [], []),
     top_up: IDL.Func([], [IDL.Nat64], []),
     transaction_notification: IDL.Func([TransactionNotification], [], []),
-    transfer_from: IDL.Func([IDL.Principal, IDL.Principal, IDL.Nat], [], []),
+    transfer_from: IDL.Func([IDL.Principal, IDL.Nat], [], []),
   });
 };
 export const init = ({ IDL }) => {
-  return [IDL.Principal, IDL.Principal];
+  const Standard = IDL.Variant({ Erc20: IDL.Null, Ledger: IDL.Null });
+  const TokenInfo = IDL.Record({
+    principal: IDL.Principal,
+    standard: Standard,
+  });
+  return [TokenInfo, TokenInfo, IDL.Principal];
 };

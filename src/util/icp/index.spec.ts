@@ -15,17 +15,17 @@ import {
 } from '.'; */
 
 import {
-  // owner,
-  // //createToken,
-  // getToken,
-  // approve,
+  owner,
+  //createToken,
+  getToken,
+  approve,
   // //stats,
   // get_all,
-  // //create_pair,
-  // get_pair,
+  //create_pair,
+  get_pair,
   // get_reserves,
-  // transfer_from,
-  mint,
+  transfer_from,
+  //mint,
 } from '.';
 
 /* 
@@ -155,29 +155,40 @@ test('call decodeTokenId get expected response', async (t) => {
   try {
     const status = await createToken('pavankumarg');
 
-    t.truthy(status?.toString() === [].toString());
+    t.is(status?.toString(), 'asdf');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 }); */
-/* 
-test('get_token', async (t) => {
+
+test('get_token pavankumar', async (t) => {
   try {
     console.log('get_token');
     const status = await getToken('pavankumar');
 
-    t.is(status, '4rsvd-faaaa-aaaaa-aablq-cai');
+    t.is(status, '72eda-dyaaa-aaaaa-aabba-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
-}); */
-/* 
+});
+test('get_token pavankumarg', async (t) => {
+  try {
+    console.log('get_token');
+    const status = await getToken('pavankumarg');
+
+    t.is(status, '75ffu-oaaaa-aaaaa-aabbq-cai');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
 test('owner', async (t) => {
   try {
     console.log('owner');
-    const status = await owner('4rsvd-faaaa-aaaaa-aablq-cai');
+    const status = await owner('75ffu-oaaaa-aaaaa-aabbq-cai');
 
     t.is(
       status,
@@ -187,8 +198,8 @@ test('owner', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-}); */
-/* 
+});
+
 test('approve', async (t) => {
   try {
     console.log('approve');
@@ -200,14 +211,14 @@ test('approve', async (t) => {
 
     const status = await approve(
       walletObj.identity,
-      '544rn-kiaaa-aaaaa-aabma-cai',
-      '535xz-hqaaa-aaaaa-aabmq-cai'
+      '72eda-dyaaa-aaaaa-aabba-cai',
+      '7icuz-piaaa-aaaaa-aabca-cai'
     );
 
     await approve(
       walletObj.identity,
-      '4rsvd-faaaa-aaaaa-aablq-cai',
-      '535xz-hqaaa-aaaaa-aabmq-cai'
+      '75ffu-oaaaa-aaaaa-aabbq-cai',
+      '7icuz-piaaa-aaaaa-aabca-cai'
     );
 
     t.is(Object.keys(status)[0], 'Ok');
@@ -216,7 +227,7 @@ test('approve', async (t) => {
     t.truthy(false);
   }
 });
- */
+
 /* test('stats', async (t) => {
   try {
     const status = await stats();
@@ -241,7 +252,10 @@ test('get_all', async (t) => {
 
 /* test('create_pair', async (t) => {
   try {
-    const status = await create_pair();
+    const status = await create_pair(
+      '72eda-dyaaa-aaaaa-aabba-cai',
+      '75ffu-oaaaa-aaaaa-aabbq-cai'
+    );
 
     t.like(status, {});
   } catch (error) {
@@ -249,17 +263,21 @@ test('get_all', async (t) => {
     t.truthy(false);
   }
 }); */
-/* 
+
 test('get_pair', async (t) => {
   try {
-    const status = await get_pair();
+    const status = await get_pair(
+      '72eda-dyaaa-aaaaa-aabba-cai',
+      '75ffu-oaaaa-aaaaa-aabbq-cai'
+    );
 
-    t.is(status, '535xz-hqaaa-aaaaa-aabmq-cai');
+    t.is(status, '7icuz-piaaa-aaaaa-aabca-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
-}); */
+});
+/*
 /* 
 test('get_reserves', async (t) => {
   try {
@@ -275,7 +293,7 @@ test('get_reserves', async (t) => {
     t.truthy(false);
   }
 }); */
-/* 
+
 test('transfer_from', async (t) => {
   try {
     const seedPhrase =
@@ -284,17 +302,17 @@ test('transfer_from', async (t) => {
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
     const status = await transfer_from(
-      '544rn-kiaaa-aaaaa-aabma-cai',
-      'tjpnz-kfh3h-es2ok-k7wp4-ieiad-qvntd-hd4k3-zxdlf-tg3of-l37zo-7ae',
+      '72eda-dyaaa-aaaaa-aabba-cai',
       1000,
-      walletObj.identity
+      walletObj.identity,
+      '7icuz-piaaa-aaaaa-aabca-cai'
     );
 
     await transfer_from(
-      '4rsvd-faaaa-aaaaa-aablq-cai',
-      'tjpnz-kfh3h-es2ok-k7wp4-ieiad-qvntd-hd4k3-zxdlf-tg3of-l37zo-7ae',
+      '75ffu-oaaaa-aaaaa-aabbq-cai',
       1000,
-      walletObj.identity
+      walletObj.identity,
+      '7icuz-piaaa-aaaaa-aabca-cai'
     );
 
     t.is(status, undefined);
@@ -303,7 +321,8 @@ test('transfer_from', async (t) => {
     t.truthy(false);
   }
 });
- */
+
+/*
 test('mint', async (t) => {
   try {
     const seedPhrase =
@@ -319,3 +338,4 @@ test('mint', async (t) => {
     t.truthy(false);
   }
 });
+ */
