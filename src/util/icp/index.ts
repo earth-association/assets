@@ -657,13 +657,10 @@ export const create_pair = async (pair1: string, pair2: string) => {
     response = null;
   }
 
-  console.log(response, 'create_pair');
-  console.log(response[0], 'create_pair');
-  console.log(response[0].toText(), 'create_pair');
   const p = response[0].toText();
   console.log(p, 'p create_pair');
 
-  return 'tfuft-aqaaa-aaaaa-aaaoq-cai';
+  return p;
 };
 
 export const getMetadata = async (tokenCanisterId: string) => {
@@ -794,7 +791,7 @@ export const transfer_from = async (
   return response;
 };
 
-export const mint = async (identity: any, canisterId: string) => {
+export const mint = async (identity: any, pairCanisterId: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -808,7 +805,7 @@ export const mint = async (identity: any, canisterId: string) => {
 
   const API = Actor.createActor(PAIR, {
     agent: agent,
-    canisterId,
+    canisterId: pairCanisterId,
   });
 
   let response: any;
@@ -826,7 +823,7 @@ export const mint = async (identity: any, canisterId: string) => {
   const response2 = await API.get_total_supply();
   const get_transit = await API.get_transit();
   try {
-    //await API.mint();
+    // await API.mint();
   } catch (error) {
     console.log();
   }
@@ -838,7 +835,14 @@ export const mint = async (identity: any, canisterId: string) => {
   console.log(response2, 'get_total_supply');
   console.log(get_transit, 'get_transit');
   //console.log(swap, 'swap');
-  const swap = await API.swap([]);
-  console.log(swap, 'swap');
+  try {
+    console.log('swap');
+
+    const swap = await API.swap([]);
+    console.log(swap, 'swap');
+  } catch (error) {
+    console.log(error);
+    console.log('swap error');
+  }
   return response;
 };

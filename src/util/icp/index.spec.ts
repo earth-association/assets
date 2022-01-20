@@ -29,6 +29,7 @@ import {
   create_pair,
   getMetadata,
   get_current_price,
+  mint,
   //mint,
 } from '.';
 
@@ -155,35 +156,43 @@ test('call decodeTokenId get expected response', async (t) => {
 });
  */
 
-test('createToken', async (t) => {
+test('createToken sdg1', async (t) => {
   try {
-    const status = await createToken('pavankumarg');
-    const status2 = await createToken('pavankumar');
-    t.is(status?.toString(), 'tqtu6-byaaa-aaaaa-aaana-cai');
-    t.is(status2?.toString(), 'txssk-maaaa-aaaaa-aaanq-cai');
+    const status = await createToken('sdg1');
+    t.is(status?.toString(), 'tlwi3-3aaaa-aaaaa-aaapq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 });
 
-test('get_token pavankumar', async (t) => {
+test('createToken sdg2', async (t) => {
   try {
-    console.log('get_token');
-    const status = await getToken('pavankumar');
-
-    t.is(status, 'txssk-maaaa-aaaaa-aaanq-cai');
+    const status = await createToken('sdg2');
+    t.is(status?.toString(), 'tmxop-wyaaa-aaaaa-aaapa-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 });
-test('get_token pavankumarg', async (t) => {
+
+test('get_token sdg1', async (t) => {
   try {
     console.log('get_token');
-    const status = await getToken('pavankumarg');
+    const status = await getToken('sdg1');
 
-    t.is(status, 'tqtu6-byaaa-aaaaa-aaana-cai');
+    t.is(status, 'tlwi3-3aaaa-aaaaa-aaapq-cai');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+test('get_token sdg2', async (t) => {
+  try {
+    console.log('get_token');
+    const status = await getToken('sdg2');
+
+    t.is(status, 'tmxop-wyaaa-aaaaa-aaapa-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -193,7 +202,7 @@ test('get_token pavankumarg', async (t) => {
 test('owner', async (t) => {
   try {
     console.log('owner');
-    const status = await owner('tqtu6-byaaa-aaaaa-aaana-cai');
+    const status = await owner('tlwi3-3aaaa-aaaaa-aaapq-cai');
 
     t.is(
       status,
@@ -216,14 +225,14 @@ test('approve', async (t) => {
 
     const status = await approve(
       walletObj.identity,
-      'txssk-maaaa-aaaaa-aaanq-cai',
-      'tfuft-aqaaa-aaaaa-aaaoq-cai'
+      'tmxop-wyaaa-aaaaa-aaapa-cai',
+      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
     );
 
     await approve(
       walletObj.identity,
-      'tqtu6-byaaa-aaaaa-aaana-cai',
-      'tfuft-aqaaa-aaaaa-aaaoq-cai'
+      'tlwi3-3aaaa-aaaaa-aaapq-cai',
+      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
     );
 
     t.is(Object.keys(status)[0], 'Ok');
@@ -258,11 +267,11 @@ test('get_all', async (t) => {
 test('create_pair', async (t) => {
   try {
     const status = await create_pair(
-      'txssk-maaaa-aaaaa-aaanq-cai',
-      'tqtu6-byaaa-aaaaa-aaana-cai'
+      'tmxop-wyaaa-aaaaa-aaapa-cai',
+      'tlwi3-3aaaa-aaaaa-aaapq-cai'
     );
 
-    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
+    t.is(status, 'wqmuk-5qaaa-aaaaa-aaaqq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -272,7 +281,7 @@ test('get_all', async (t) => {
   try {
     const status = await getAllTokens();
 
-    t.is(status.length, 7);
+    t.is(status.length, 9);
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -281,9 +290,9 @@ test('get_all', async (t) => {
 
 test('getMetadata', async (t) => {
   try {
-    const status = await getMetadata('txssk-maaaa-aaaaa-aaanq-cai');
+    const status = await getMetadata('tmxop-wyaaa-aaaaa-aaapa-cai');
 
-    t.like(status, { symbol: 'pavankumar', name: 'pavankumar' });
+    t.like(status, { symbol: 'sdg2', name: 'sdg2' });
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -293,11 +302,11 @@ test('getMetadata', async (t) => {
 test('get_pair', async (t) => {
   try {
     const status = await get_pair(
-      'txssk-maaaa-aaaaa-aaanq-cai',
-      'tqtu6-byaaa-aaaaa-aaana-cai'
+      'tmxop-wyaaa-aaaaa-aaapa-cai',
+      'tlwi3-3aaaa-aaaaa-aaapq-cai'
     );
 
-    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
+    t.is(status, 'wqmuk-5qaaa-aaaaa-aaaqq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -305,9 +314,9 @@ test('get_pair', async (t) => {
 });
 test('get_current_price', async (t) => {
   try {
-    const status = await get_current_price('tfuft-aqaaa-aaaaa-aaaoq-cai');
+    const status = await get_current_price('wqmuk-5qaaa-aaaaa-aaaqq-cai');
 
-    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
+    t.is(status[0], 1);
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -338,17 +347,17 @@ test('transfer_from', async (t) => {
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
     const status = await transfer_from(
-      'txssk-maaaa-aaaaa-aaanq-cai',
+      'tmxop-wyaaa-aaaaa-aaapa-cai',
       1000,
       walletObj.identity,
-      'tfuft-aqaaa-aaaaa-aaaoq-cai'
+      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
     );
 
     await transfer_from(
-      'tqtu6-byaaa-aaaaa-aaana-cai',
+      'tlwi3-3aaaa-aaaaa-aaapq-cai',
       1000,
       walletObj.identity,
-      'tfuft-aqaaa-aaaaa-aaaoq-cai'
+      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
     );
 
     t.is(status, undefined);
@@ -358,7 +367,6 @@ test('transfer_from', async (t) => {
   }
 });
 
-/*
 test('mint', async (t) => {
   try {
     const seedPhrase =
@@ -366,7 +374,10 @@ test('mint', async (t) => {
 
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
-    const status = await mint(walletObj.identity);
+    const status = await mint(
+      walletObj.identity,
+      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
+    );
 
     t.is(status, undefined);
   } catch (error) {
@@ -374,4 +385,3 @@ test('mint', async (t) => {
     t.truthy(false);
   }
 });
- */
