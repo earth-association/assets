@@ -16,7 +16,7 @@ import {
 
 import {
   owner,
-  //createToken,
+  createToken,
   getToken,
   approve,
   // //stats,
@@ -25,6 +25,10 @@ import {
   get_pair,
   // get_reserves,
   transfer_from,
+  getAllTokens,
+  create_pair,
+  getMetadata,
+  get_current_price,
   //mint,
 } from '.';
 
@@ -151,23 +155,24 @@ test('call decodeTokenId get expected response', async (t) => {
 });
  */
 
-/* test('createToken', async (t) => {
+test('createToken', async (t) => {
   try {
     const status = await createToken('pavankumarg');
-
-    t.is(status?.toString(), 'asdf');
+    const status2 = await createToken('pavankumar');
+    t.is(status?.toString(), 'tqtu6-byaaa-aaaaa-aaana-cai');
+    t.is(status2?.toString(), 'txssk-maaaa-aaaaa-aaanq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
-}); */
+});
 
 test('get_token pavankumar', async (t) => {
   try {
     console.log('get_token');
     const status = await getToken('pavankumar');
 
-    t.is(status, '72eda-dyaaa-aaaaa-aabba-cai');
+    t.is(status, 'txssk-maaaa-aaaaa-aaanq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -178,7 +183,7 @@ test('get_token pavankumarg', async (t) => {
     console.log('get_token');
     const status = await getToken('pavankumarg');
 
-    t.is(status, '75ffu-oaaaa-aaaaa-aabbq-cai');
+    t.is(status, 'tqtu6-byaaa-aaaaa-aaana-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -188,7 +193,7 @@ test('get_token pavankumarg', async (t) => {
 test('owner', async (t) => {
   try {
     console.log('owner');
-    const status = await owner('75ffu-oaaaa-aaaaa-aabbq-cai');
+    const status = await owner('tqtu6-byaaa-aaaaa-aaana-cai');
 
     t.is(
       status,
@@ -211,14 +216,14 @@ test('approve', async (t) => {
 
     const status = await approve(
       walletObj.identity,
-      '72eda-dyaaa-aaaaa-aabba-cai',
-      '7icuz-piaaa-aaaaa-aabca-cai'
+      'txssk-maaaa-aaaaa-aaanq-cai',
+      'tfuft-aqaaa-aaaaa-aaaoq-cai'
     );
 
     await approve(
       walletObj.identity,
-      '75ffu-oaaaa-aaaaa-aabbq-cai',
-      '7icuz-piaaa-aaaaa-aabca-cai'
+      'tqtu6-byaaa-aaaaa-aaana-cai',
+      'tfuft-aqaaa-aaaaa-aaaoq-cai'
     );
 
     t.is(Object.keys(status)[0], 'Ok');
@@ -250,28 +255,59 @@ test('get_all', async (t) => {
   }
 }); */
 
-/* test('create_pair', async (t) => {
+test('create_pair', async (t) => {
   try {
     const status = await create_pair(
-      '72eda-dyaaa-aaaaa-aabba-cai',
-      '75ffu-oaaaa-aaaaa-aabbq-cai'
+      'txssk-maaaa-aaaaa-aaanq-cai',
+      'tqtu6-byaaa-aaaaa-aaana-cai'
     );
 
-    t.like(status, {});
+    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
-}); */
+});
+test('get_all', async (t) => {
+  try {
+    const status = await getAllTokens();
+
+    t.is(status.length, 7);
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('getMetadata', async (t) => {
+  try {
+    const status = await getMetadata('txssk-maaaa-aaaaa-aaanq-cai');
+
+    t.like(status, { symbol: 'pavankumar', name: 'pavankumar' });
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
 
 test('get_pair', async (t) => {
   try {
     const status = await get_pair(
-      '72eda-dyaaa-aaaaa-aabba-cai',
-      '75ffu-oaaaa-aaaaa-aabbq-cai'
+      'txssk-maaaa-aaaaa-aaanq-cai',
+      'tqtu6-byaaa-aaaaa-aaana-cai'
     );
 
-    t.is(status, '7icuz-piaaa-aaaaa-aabca-cai');
+    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+test('get_current_price', async (t) => {
+  try {
+    const status = await get_current_price('tfuft-aqaaa-aaaaa-aaaoq-cai');
+
+    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -302,17 +338,17 @@ test('transfer_from', async (t) => {
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
     const status = await transfer_from(
-      '72eda-dyaaa-aaaaa-aabba-cai',
+      'txssk-maaaa-aaaaa-aaanq-cai',
       1000,
       walletObj.identity,
-      '7icuz-piaaa-aaaaa-aabca-cai'
+      'tfuft-aqaaa-aaaaa-aaaoq-cai'
     );
 
     await transfer_from(
-      '75ffu-oaaaa-aaaaa-aabbq-cai',
+      'tqtu6-byaaa-aaaaa-aaana-cai',
       1000,
       walletObj.identity,
-      '7icuz-piaaa-aaaaa-aabca-cai'
+      'tfuft-aqaaa-aaaaa-aaaoq-cai'
     );
 
     t.is(status, undefined);

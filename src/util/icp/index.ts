@@ -451,11 +451,38 @@ export const createToken = async (token: string) => {
     console.log(error);
     response = null;
   }
-  console.log(response);
+  console.log(response, 'create_token');
 
   return response;
 };
 
+export const getAllTokens = async () => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN_FACTORY, {
+    agent: agent,
+    canisterId: 'q3fc5-haaaa-aaaaa-aaahq-cai',
+  });
+
+  let response: any;
+  try {
+    response = await API.get_all();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+  //console.log(response, 'get_all');
+
+  return response.map((token) => token.toText());
+};
 export const getToken = async (token: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
@@ -484,8 +511,6 @@ export const getToken = async (token: string) => {
 };
 
 export const owner = async (canisterId: string) => {
-  const p = 'aaaaa-aa';
-
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -501,7 +526,6 @@ export const owner = async (canisterId: string) => {
     canisterId,
   });
 
-  console.log(Principal.fromText(p), 23);
   let response: any;
   try {
     response = await API.owner();
@@ -634,6 +658,41 @@ export const create_pair = async (pair1: string, pair2: string) => {
   }
 
   console.log(response, 'create_pair');
+  console.log(response[0], 'create_pair');
+  console.log(response[0].toText(), 'create_pair');
+  const p = response[0].toText();
+  console.log(p, 'p create_pair');
+
+  return 'tfuft-aqaaa-aaaaa-aaaoq-cai';
+};
+
+export const getMetadata = async (tokenCanisterId: string) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN, {
+    agent: agent,
+    canisterId: tokenCanisterId,
+  });
+
+  let response: any;
+
+  try {
+    response = await API.getMetadata();
+  } catch (error) {
+    console.log(error);
+    response = null;
+  }
+
+  console.log(response, 'getMetadata');
+  console.log(response, 'getMetadata');
 
   return response;
 };
@@ -669,7 +728,7 @@ export const get_pair = async (pair1: string, pair2: string) => {
   return response[0]?.toText();
 };
 
-export const get_reserves = async (canisterId: string) => {
+export const get_current_price = async (canisterId: string) => {
   const agent = await Promise.resolve(
     new HttpAgent({
       host: ICP_TESTNET_HOST,
@@ -688,13 +747,13 @@ export const get_reserves = async (canisterId: string) => {
   let response: any;
 
   try {
-    response = await API.get_reserves();
+    response = await API.get_current_price();
   } catch (error) {
     console.log(error);
     response = null;
   }
 
-  console.log(response, 'get_reserves');
+  console.log(response, 'get_current_price');
 
   console.log(response);
   return response;
@@ -731,7 +790,7 @@ export const transfer_from = async (
     response = null;
   }
 
-  console.log(response, 'transfer_from');
+  //console.log(response, 'transfer_from');
   return response;
 };
 
