@@ -372,9 +372,8 @@ export const canisterAgentApi = async (
     agent,
     canisterId: canisterId,
   });
-
+  let response: any;
   try {
-    let response: any;
     if (args === undefined) {
       response = await API[methodName]();
     } else {
@@ -383,6 +382,13 @@ export const canisterAgentApi = async (
     return response;
   } catch (error) {
     console.log(error);
+    if (
+      error?.message == 'Wrong number of message arguments' &&
+      Array.isArray(args)
+    ) {
+      response = await API[methodName](...args);
+      return response;
+    }
     return { type: 'error', message: error?.message };
   }
 };
@@ -419,25 +425,10 @@ export const decodeTokenId = (tid: string) => {
 };
 
 export const createToken = async (token: string) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(TOKEN_FACTORY, {
-    agent: agent,
-    canisterId: 'q3fc5-haaaa-aaaaa-aaahq-cai',
-  });
-
   let response: any;
   const p = 'tjpnz-kfh3h-es2ok-k7wp4-ieiad-qvntd-hd4k3-zxdlf-tg3of-l37zo-7ae';
   try {
-    response = await API.create_token({
+    response = await tokenFactoryAPI('create_token', {
       logo: '',
       fee: 1,
       name: token,
@@ -457,24 +448,9 @@ export const createToken = async (token: string) => {
 };
 
 export const getAllTokens = async () => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(TOKEN_FACTORY, {
-    agent: agent,
-    canisterId: 'q3fc5-haaaa-aaaaa-aaahq-cai',
-  });
-
   let response: any;
   try {
-    response = await API.get_all();
+    response = await tokenFactoryAPI('get_all');
   } catch (error) {
     console.log(error);
     response = null;
@@ -484,24 +460,9 @@ export const getAllTokens = async () => {
   return response.map((token) => token.toText());
 };
 export const getToken = async (token: string) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(TOKEN_FACTORY, {
-    agent: agent,
-    canisterId: 'q3fc5-haaaa-aaaaa-aaahq-cai',
-  });
-
   let response: any;
   try {
-    response = await API.get_token(token);
+    response = await tokenFactoryAPI('get_token', token);
   } catch (error) {
     console.log(error);
     response = null;
@@ -511,31 +472,13 @@ export const getToken = async (token: string) => {
 };
 
 export const owner = async (canisterId: string) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(TOKEN, {
-    agent: agent,
-    canisterId,
-  });
-
   let response: any;
   try {
-    response = await API.owner();
+    response = await tokenAPI(canisterId, 'owner');
   } catch (error) {
     console.log(error);
     response = null;
   }
-
-  console.log(response?.toText());
-
   return response?.toText();
 };
 
@@ -544,25 +487,14 @@ export const approve = async (
   tokenCanisterId: string,
   pairCanisterId: string
 ) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-      identity,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(TOKEN, {
-    agent: agent,
-    canisterId: tokenCanisterId,
-  });
-
   let response: any;
   try {
-    response = await API.approve(Principal.fromText(pairCanisterId), 10000);
+    response = await tokenAPI(
+      tokenCanisterId,
+      'approve',
+      [Principal.fromText(pairCanisterId), 10000],
+      identity
+    );
   } catch (error) {
     console.log(error);
     response = null;
@@ -574,24 +506,9 @@ export const approve = async (
 };
 
 export const stats = async (canisterId: string) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(PAIR, {
-    agent: agent,
-    canisterId,
-  });
-
   let response: any;
   try {
-    response = await API.stats();
+    response = await pairAPI(canisterId, 'stats');
   } catch (error) {
     console.log(error);
     response = null;
@@ -602,31 +519,18 @@ export const stats = async (canisterId: string) => {
   return response;
 };
 
-export const get_all = async (canisterId: string) => {
-  const agent = await Promise.resolve(
-    new HttpAgent({
-      host: ICP_TESTNET_HOST,
-      fetch,
-    })
-  ).then(async (ag) => {
-    await ag.fetchRootKey();
-    return ag;
-  });
-
-  const API = Actor.createActor(PAIR_FACTORY, {
-    agent: agent,
-    canisterId,
-  });
-
+export const get_reserves = async (canisterId: string) => {
   let response: any;
   try {
-    response = await API.get_all();
+    response = await pairAPI(canisterId, 'get_reserves');
   } catch (error) {
     console.log(error);
     response = null;
   }
 
-  return response.map((token) => token.toText());
+  console.log(response, 'get_reserves');
+
+  return response;
 };
 
 export const create_pair = async (pair1: string, pair2: string) => {
@@ -811,25 +715,29 @@ export const mint = async (identity: any, pairCanisterId: string) => {
   let response: any;
 
   try {
-    //response = await API.mint();
+    response = await API.mint();
   } catch (error) {
     console.log(error);
     response = null;
   }
 
   const get_history_length = await API.get_history_length();
-  const get_transactions = await API.get_transactions(1, 38);
+  //const get_transactions = await API.get_transactions(1, get_history_length);
 
   const response2 = await API.get_total_supply();
   const get_transit = await API.get_transit();
-  try {
-    // await API.mint();
+
+  //want one of the transit tokens to have 0 balance
+
+  //stop transfer_form for one of tokens
+  /*   try {
+    await API.mint();
   } catch (error) {
     console.log();
-  }
+  } */
   //const swap = await API.swap();
   console.log(response, 'mint');
-  console.log(get_transactions, 'get_transactions');
+  //console.log(get_transactions, 'get_transactions');
 
   console.log(get_history_length, 'get_history_length');
   console.log(response2, 'get_total_supply');
@@ -838,11 +746,144 @@ export const mint = async (identity: any, pairCanisterId: string) => {
   try {
     console.log('swap');
 
-    const swap = await API.swap([]);
+    //const swap = await API.swap();
+    //console.log(swap, 'swap');
+  } catch (error) {
+    console.log(error);
+    console.log('swap error');
+  }
+  return response;
+};
+
+export const swap = async (identity: any, pairCanisterId: string) => {
+  let response: any;
+
+  try {
+    await pairAPI(pairCanisterId, 'mint', identity);
+  } catch (error) {
+    console.log();
+  }
+
+  //console.log(swap, 'swap');
+  try {
+    console.log('swap');
+
+    response = await pairAPI(pairCanisterId, 'swap', identity);
     console.log(swap, 'swap');
   } catch (error) {
     console.log(error);
     console.log('swap error');
   }
   return response;
+};
+
+export const tokenAPI = async (
+  canisterId: string,
+  methodName: string,
+  args?: any,
+  fromIdentity?: Identity
+) => infiniteSwapAPI('TOKEN', canisterId, methodName, args, fromIdentity);
+export const pairAPI = async (
+  canisterId: string,
+  methodName: string,
+  args?: any,
+  fromIdentity?: Identity
+) => infiniteSwapAPI('PAIR', canisterId, methodName, args, fromIdentity);
+export const pairFactoryAPI = async (
+  methodName: string,
+  args?: any,
+  fromIdentity?: Identity
+) =>
+  infiniteSwapAPI(
+    'PAIR_FACTORY',
+    'q4eej-kyaaa-aaaaa-aaaha-cai',
+    methodName,
+    args,
+    fromIdentity
+  );
+export const tokenFactoryAPI = async (
+  methodName: string,
+  args?: any,
+  fromIdentity?: Identity
+) =>
+  infiniteSwapAPI(
+    'TOKEN_FACTORY',
+    'q3fc5-haaaa-aaaaa-aaahq-cai',
+    methodName,
+    args,
+    fromIdentity
+  );
+export const infiniteSwapAPI = async (
+  canisterType: string,
+  canisterId: string,
+  methodName: string,
+  args?: any,
+  fromIdentity?: Identity
+) => {
+  let agent;
+  if (fromIdentity === null) {
+    agent = await Promise.resolve(
+      new HttpAgent({
+        host: ICP_TESTNET_HOST,
+        fetch,
+      })
+    ).then(async (ag) => {
+      await ag.fetchRootKey();
+      return ag;
+    });
+  } else {
+    agent = await Promise.resolve(
+      new HttpAgent({
+        host: ICP_TESTNET_HOST,
+        fetch,
+        identity: fromIdentity,
+      })
+    ).then(async (ag) => {
+      await ag.fetchRootKey();
+      return ag;
+    });
+  }
+
+  let DID;
+  switch (canisterType) {
+    case 'TOKEN':
+      DID = TOKEN;
+      break;
+    case 'PAIR':
+      DID = PAIR;
+      break;
+    case 'TOKEN_FACTORY':
+      DID = TOKEN_FACTORY;
+      break;
+    case 'PAIR_FACTORY':
+      DID = PAIR_FACTORY;
+      break;
+    default:
+      DID = TOKEN_FACTORY;
+      break;
+  }
+  const API = Actor.createActor(DID, {
+    agent: agent,
+    canisterId,
+  });
+  let response: any;
+
+  try {
+    if (args === undefined) {
+      response = await API[methodName]();
+    } else {
+      response = await API[methodName](args);
+    }
+    return response;
+  } catch (error) {
+    console.log(error);
+    if (
+      error?.message == 'Wrong number of message arguments' &&
+      Array.isArray(args)
+    ) {
+      response = await API[methodName](...args);
+      return response;
+    }
+    return { type: 'error', message: error?.message };
+  }
 };
