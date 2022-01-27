@@ -381,15 +381,16 @@ export const canisterAgentApi = async (
     }
     return response;
   } catch (error) {
-    console.log(error);
     if (
       error?.message == 'Wrong number of message arguments' &&
       Array.isArray(args)
     ) {
       response = await API[methodName](...args);
       return response;
+    } else {
+      console.log(error);
+      return { type: 'error', message: error?.message };
     }
-    return { type: 'error', message: error?.message };
   }
 };
 
@@ -442,7 +443,7 @@ export const createToken = async (token: string) => {
     console.log(error);
     response = null;
   }
-  console.log(response, 'create_token');
+  //console.log(response, 'create_token');
 
   return response;
 };
@@ -467,7 +468,7 @@ export const getToken = async (token: string) => {
     console.log(error);
     response = null;
   }
-  console.log(response[0]?.toText());
+  //console.log(response[0]?.toText());
   return response[0]?.toText();
 };
 
@@ -485,22 +486,32 @@ export const owner = async (canisterId: string) => {
 export const approve = async (
   identity: any,
   tokenCanisterId: string,
-  pairCanisterId: string
+  pairCanisterId: string,
+  amount: number
 ) => {
+  const agent = await Promise.resolve(
+    new HttpAgent({
+      host: ICP_TESTNET_HOST,
+      fetch,
+      identity,
+    })
+  ).then(async (ag) => {
+    await ag.fetchRootKey();
+    return ag;
+  });
+
+  const API = Actor.createActor(TOKEN, {
+    agent: agent,
+    canisterId: tokenCanisterId,
+  });
+
   let response: any;
   try {
-    response = await tokenAPI(
-      tokenCanisterId,
-      'approve',
-      [Principal.fromText(pairCanisterId), 10000],
-      identity
-    );
+    response = await API.approve(Principal.fromText(pairCanisterId), amount);
   } catch (error) {
     console.log(error);
     response = null;
   }
-
-  console.log(response);
 
   return response;
 };
@@ -592,8 +603,8 @@ export const getMetadata = async (tokenCanisterId: string) => {
     response = null;
   }
 
-  console.log(response, 'getMetadata');
-  console.log(response, 'getMetadata');
+  // console.log(response, 'getMetadata');
+  // console.log(response, 'getMetadata');
 
   return response;
 };
@@ -691,7 +702,7 @@ export const transfer_from = async (
     response = null;
   }
 
-  //console.log(response, 'transfer_from');
+  console.log(response, 'transfer_from');
   return response;
 };
 
@@ -713,7 +724,8 @@ export const mint = async (identity: any, pairCanisterId: string) => {
   });
 
   let response: any;
-
+  const get_transit0 = await API.get_transit();
+  console.log(get_transit0, '0 mint');
   try {
     response = await API.mint();
   } catch (error) {
@@ -755,25 +767,63 @@ export const mint = async (identity: any, pairCanisterId: string) => {
   return response;
 };
 
-export const swap = async (identity: any, pairCanisterId: string) => {
+export const swap = async (
+  identity: any,
+  pairCanisterId: string,
+  tokenCanisterId?: string,
+  amount?: number
+) => {
   let response: any;
 
-  try {
-    await pairAPI(pairCanisterId, 'mint', identity);
-  } catch (error) {
-    console.log();
-  }
+  //approve
+  //transfer_from
+  const get_history_length = await pairAPI(
+    pairCanisterId,
+    'get_history_length'
+  );
+  const get_reserves = await pairAPI(pairCanisterId, 'get_reserves');
 
+  console.log(get_history_length, get_reserves, 'get_history_length 0');
+  const get_transactions = await pairAPI(pairCanisterId, 'get_transactions', [
+    1,
+    get_history_length,
+  ]);
+  const get_transitx = await pairAPI(pairCanisterId, 'get_transit');
+
+  const _approve = await approve(
+    identity,
+    tokenCanisterId,
+    pairCanisterId,
+    amount
+  );
+  const get_transity = await pairAPI(pairCanisterId, 'get_transit');
+
+  const _transfer_from = await transfer_from(
+    tokenCanisterId,
+    amount,
+    identity,
+    pairCanisterId
+  );
+  const get_transitz = await pairAPI(pairCanisterId, 'get_transit');
+  console.log('get_transitz', get_transitx, get_transity, get_transitz);
+
+  console.log('_approve', _approve);
+  console.log('_transfer_from', _transfer_from);
+  console.log('get_transactions', get_transactions);
+
+  //const get_transactions = await API.get_transactions(1, get_history_length);
+  const get_transit = await pairAPI(pairCanisterId, 'get_transit');
+  console.log(get_transit, tokenCanisterId, amount, 'get_transit 0');
   //console.log(swap, 'swap');
   try {
-    console.log('swap');
-
-    response = await pairAPI(pairCanisterId, 'swap', identity);
-    console.log(swap, 'swap');
+    response = await pairAPI(pairCanisterId, 'swap', undefined, identity);
   } catch (error) {
     console.log(error);
     console.log('swap error');
   }
+  const get_transit1 = await pairAPI(pairCanisterId, 'get_transit');
+  console.log(get_transit1, 'get_transit 1');
+  console.log(response, 'swap response');
   return response;
 };
 
@@ -881,9 +931,16 @@ export const infiniteSwapAPI = async (
       error?.message == 'Wrong number of message arguments' &&
       Array.isArray(args)
     ) {
-      response = await API[methodName](...args);
-      return response;
+      try {
+        response = await API[methodName](...args);
+        return response;
+      } catch (error) {
+        console.log(error);
+        console.log('Executing without array Error', methodName);
+      }
+    } else {
+      console.log(error);
+      return { type: 'error', message: error?.message };
     }
-    return { type: 'error', message: error?.message };
   }
 };
