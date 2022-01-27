@@ -18,7 +18,6 @@ export const idlFactory = ({ IDL }) => {
       ['query']
     ),
     length: IDL.Func([], [IDL.Nat64], ['query']),
-    set_admin: IDL.Func([IDL.Principal], [], []),
     set_cap: IDL.Func(
       [IDL.Principal, IDL.Principal, IDL.Opt(IDL.Nat)],
       [Result],
@@ -32,6 +31,6 @@ export const idlFactory = ({ IDL }) => {
     version: IDL.Func([], [IDL.Text], ['query']),
   });
 };
-export const init = () => {
-  return [];
+export const init = ({ IDL }) => {
+  return [IDL.Principal];
 };

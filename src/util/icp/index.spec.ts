@@ -157,19 +157,19 @@ test('call decodeTokenId get expected response', async (t) => {
 });
  */
 
-test('createToken sdg1', async (t) => {
+test('createToken abc1', async (t) => {
   try {
-    const status = await createToken('sdg1');
-    t.is(status?.toString(), 'tlwi3-3aaaa-aaaaa-aaapq-cai');
+    const status = await createToken('abc1');
+    t.is(status?.toString(), 'tfuft-aqaaa-aaaaa-aaaoq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 });
 
-test('createToken sdg2', async (t) => {
+test('createToken abc2', async (t) => {
   try {
-    const status = await createToken('sdg2');
+    const status = await createToken('abc2');
     t.is(status?.toString(), 'tmxop-wyaaa-aaaaa-aaapa-cai');
   } catch (error) {
     console.log(error);
@@ -177,21 +177,21 @@ test('createToken sdg2', async (t) => {
   }
 });
 
-test('get_token sdg1', async (t) => {
+test('get_token abc1', async (t) => {
   try {
     console.log('get_token');
-    const status = await getToken('sdg1');
+    const status = await getToken('abc1');
 
-    t.is(status, 'tlwi3-3aaaa-aaaaa-aaapq-cai');
+    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 });
-test('get_token sdg2', async (t) => {
+test('get_token abc2', async (t) => {
   try {
     console.log('get_token');
-    const status = await getToken('sdg2');
+    const status = await getToken('abc2');
 
     t.is(status, 'tmxop-wyaaa-aaaaa-aaapa-cai');
   } catch (error) {
@@ -203,7 +203,7 @@ test('get_token sdg2', async (t) => {
 test('owner', async (t) => {
   try {
     console.log('owner');
-    const status = await owner('tlwi3-3aaaa-aaaaa-aaapq-cai');
+    const status = await owner('tfuft-aqaaa-aaaaa-aaaoq-cai');
 
     t.is(
       status,
@@ -227,13 +227,13 @@ test('approve', async (t) => {
     const status = await approve(
       walletObj.identity,
       'tmxop-wyaaa-aaaaa-aaapa-cai',
-      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
+      'wxns6-qiaaa-aaaaa-aaaqa-cai'
     );
 
     /*     await approve(
       walletObj.identity,
-      'tlwi3-3aaaa-aaaaa-aaapq-cai',
-      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
+      'tfuft-aqaaa-aaaaa-aaaoq-cai',
+      'wxns6-qiaaa-aaaaa-aaaqa-cai'
     );
  */
     t.is(Object.keys(status)[0], 'Ok');
@@ -269,10 +269,10 @@ test('create_pair', async (t) => {
   try {
     const status = await create_pair(
       'tmxop-wyaaa-aaaaa-aaapa-cai',
-      'tlwi3-3aaaa-aaaaa-aaapq-cai'
+      'tfuft-aqaaa-aaaaa-aaaoq-cai'
     );
 
-    t.is(status, 'wqmuk-5qaaa-aaaaa-aaaqq-cai');
+    t.is(status, 'wxns6-qiaaa-aaaaa-aaaqa-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -282,7 +282,7 @@ test('get_all', async (t) => {
   try {
     const status = await getAllTokens();
 
-    t.is(status.length, 9);
+    t.is(status.length, 8);
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -293,7 +293,7 @@ test('getMetadata', async (t) => {
   try {
     const status = await getMetadata('tmxop-wyaaa-aaaaa-aaapa-cai');
 
-    t.like(status, { symbol: 'sdg2', name: 'sdg2' });
+    t.like(status, { symbol: 'abc2', name: 'abc2' });
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -304,10 +304,10 @@ test('get_pair', async (t) => {
   try {
     const status = await get_pair(
       'tmxop-wyaaa-aaaaa-aaapa-cai',
-      'tlwi3-3aaaa-aaaaa-aaapq-cai'
+      'tfuft-aqaaa-aaaaa-aaaoq-cai'
     );
 
-    t.is(status, 'wqmuk-5qaaa-aaaaa-aaaqq-cai');
+    t.is(status, 'wxns6-qiaaa-aaaaa-aaaqa-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -317,7 +317,7 @@ test('get_current_price', async (t) => {
   t.truthy(true);
   return;
   try {
-    const status = await get_current_price('wqmuk-5qaaa-aaaaa-aaaqq-cai');
+    const status = await get_current_price('wxns6-qiaaa-aaaaa-aaaqa-cai');
 
     t.is(status[0], 1.2651828847481021);
   } catch (error) {
@@ -330,7 +330,7 @@ test('get_reserves', async (t) => {
   t.truthy(true);
   return;
   try {
-    const status = await get_reserves('wqmuk-5qaaa-aaaaa-aaaqq-cai');
+    const status = await get_reserves('wxns6-qiaaa-aaaaa-aaaqa-cai');
 
     t.like(status, {
       block_timestamp_last: 1540448708,
@@ -354,14 +354,14 @@ test('transfer_from', async (t) => {
       'tmxop-wyaaa-aaaaa-aaapa-cai',
       1000,
       walletObj.identity,
-      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
+      'wxns6-qiaaa-aaaaa-aaaqa-cai'
     );
 
     await transfer_from(
-      'tlwi3-3aaaa-aaaaa-aaapq-cai',
+      'tfuft-aqaaa-aaaaa-aaaoq-cai',
       1234,
       walletObj.identity,
-      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
+      'wxns6-qiaaa-aaaaa-aaaqa-cai'
     );
 
     t.is(status, undefined);
@@ -380,7 +380,7 @@ test('mint', async (t) => {
 
     const status = await mint(
       walletObj.identity,
-      'wqmuk-5qaaa-aaaaa-aaaqq-cai'
+      'wxns6-qiaaa-aaaaa-aaaqa-cai'
     );
 
     t.is(status, undefined);
