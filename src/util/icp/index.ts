@@ -268,8 +268,20 @@ export const candidToJs = async (candid: string) => {
   return js[0];
 };
 
+export async function fetchJsFromLocalCanisterId(
+  canisterId: string,
+  host: string
+): Promise<undefined | string> {
+  const url = `${host}/_/candid?canisterId=${canisterId}&format=js`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    return undefined;
+  }
+  return response.text();
+}
 export async function fetchJsFromCanisterId(
-  canisterId: string
+  canisterId: string,
+  host?: string
 ): Promise<undefined | string> {
   let candid_source: any;
 
@@ -278,7 +290,7 @@ export async function fetchJsFromCanisterId(
   } else {
     const agent = await Promise.resolve(
       new HttpAgent({
-        host: ICP_HOST,
+        host: host ? host : ICP_HOST,
         fetch,
       })
     ).then(async (ag) => {
@@ -327,17 +339,32 @@ export async function fetchJsFromCanisterIdWithIcRocks(
   return js;
 }
 
+export const canisterAgent = async ({
+  canisterId,
+  method,
+  args,
+  fromIdentity,
+  host,
+}: {
+  canisterId: string;
+  method: string;
+  args?: any;
+  fromIdentity?: any;
+  host?: string;
+}) => await canisterAgentApi(canisterId, method, args, fromIdentity, host);
+
 export const canisterAgentApi = async (
   canisterId: string,
   methodName: string,
   args?: any,
-  fromIdentity?: Identity
+  fromIdentity?: Identity,
+  host?: string
 ) => {
   let agent;
   if (fromIdentity === null) {
     agent = await Promise.resolve(
       new HttpAgent({
-        host: ICP_HOST,
+        host: host ? host : ICP_HOST,
         fetch,
       })
     ).then(async (ag) => {
@@ -347,7 +374,7 @@ export const canisterAgentApi = async (
   } else {
     agent = await Promise.resolve(
       new HttpAgent({
-        host: ICP_HOST,
+        host: host ? host : ICP_HOST,
         fetch,
         identity: fromIdentity,
       })
@@ -359,13 +386,20 @@ export const canisterAgentApi = async (
 
   let candid: any;
 
-  if (!(canisterId in NNS_CANISTERS)) {
-    const js = await fetchJsFromCanisterId(canisterId);
+  if (host != undefined) {
+    const js = await fetchJsFromLocalCanisterId(canisterId, host);
     const dataUri =
       'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
     candid = await eval('import("' + dataUri + '")');
   } else {
-    candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+    if (!(canisterId in NNS_CANISTERS)) {
+      const js = await fetchJsFromCanisterId(canisterId);
+      const dataUri =
+        'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
+      candid = await eval('import("' + dataUri + '")');
+    } else {
+      candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+    }
   }
 
   const API = Actor.createActor(candid?.default || candid?.idlFactory, {
@@ -788,7 +822,12 @@ export const swap = async (
     1,
     get_history_length,
   ]);
-  const get_transitx = await pairAPI(pairCanisterId, 'get_transit');
+  const get_transitx = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
 
   const _approve = await approve(
     identity,
@@ -796,7 +835,15 @@ export const swap = async (
     pairCanisterId,
     amount
   );
-  const get_transity = await pairAPI(pairCanisterId, 'get_transit');
+  console.log('_approve', _approve);
+  console.log('_approve', get_transitx);
+
+  const get_transity = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
 
   const _transfer_from = await transfer_from(
     tokenCanisterId,
@@ -804,15 +851,25 @@ export const swap = async (
     identity,
     pairCanisterId
   );
-  const get_transitz = await pairAPI(pairCanisterId, 'get_transit');
-  console.log('get_transitz', get_transitx, get_transity, get_transitz);
+  console.log('_transfer_from amount', amount, _transfer_from);
+  console.log('_transfer_from', get_transity);
 
-  console.log('_approve', _approve);
-  console.log('_transfer_from', _transfer_from);
+  const get_transitz = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
+  console.log('get_transit', get_transitz);
   console.log('get_transactions', get_transactions);
 
   //const get_transactions = await API.get_transactions(1, get_history_length);
-  const get_transit = await pairAPI(pairCanisterId, 'get_transit');
+  const get_transit = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
   console.log(get_transit, tokenCanisterId, amount, 'get_transit 0');
   //console.log(swap, 'swap');
   try {
@@ -821,9 +878,120 @@ export const swap = async (
     console.log(error);
     console.log('swap error');
   }
-  const get_transit1 = await pairAPI(pairCanisterId, 'get_transit');
+  const get_transit1 = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
   console.log(get_transit1, 'get_transit 1');
   console.log(response, 'swap response');
+  return response;
+};
+
+export const stake = async (
+  identity: any,
+  token1: string,
+  token2: string,
+  amount?: number
+) => {
+  let response = await pairFactoryAPI('get_pair', [
+    Principal.fromText(token1),
+    Principal.fromText(token2),
+  ]);
+  console.log(response, 'get_pair');
+  if (response == undefined || response.length == 0) {
+    response = await pairFactoryAPI('create_pair', [
+      Principal.fromText(token1),
+      Principal.fromText(token2),
+      identity,
+    ]);
+  }
+  const pairCanisterId = response[0].toText();
+  const price = await get_current_price(pairCanisterId);
+  const price1 = price[0];
+  const price2 = price[1];
+  const ratio = isNaN(price[0]) ? 1 : price[0];
+  console.log(price2, price1, ratio);
+
+  //approve
+  //transfer_from
+  const get_history_length = await pairAPI(
+    pairCanisterId,
+    'get_history_length'
+  );
+  const get_reserves = await pairAPI(pairCanisterId, 'get_reserves');
+
+  console.log(get_history_length, get_reserves, 'get_history_length 0');
+  const get_transactions = await pairAPI(pairCanisterId, 'get_transactions', [
+    1,
+    get_history_length,
+  ]);
+  const get_transitx = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
+
+  const _approve1 = await approve(identity, token1, pairCanisterId, amount);
+
+  console.log('_approve', _approve1);
+  console.log('_approve', get_transitx);
+
+  const get_transity = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
+
+  const _transfer_from1 = await transfer_from(
+    token1,
+    amount,
+    identity,
+    pairCanisterId
+  );
+  console.log('_transfer_from amount', amount, _transfer_from1);
+  console.log('_transfer_from', get_transity);
+  const _approve2 = await approve(identity, token2, pairCanisterId, amount);
+  const _transfer_from2 = await transfer_from(
+    token2,
+    amount,
+    identity,
+    pairCanisterId
+  );
+  const get_transitz = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
+  console.log('get_transit', get_transitz, _approve2, _transfer_from2);
+  console.log('get_transactions', get_transactions);
+
+  //const get_transactions = await API.get_transactions(1, get_history_length);
+  const get_transit = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
+  console.log(get_transit, token1, amount, 'get_transit 0');
+  try {
+    response = await pairAPI(pairCanisterId, 'mint', undefined, identity);
+  } catch (error) {
+    console.log(error);
+    console.log('stake error');
+  }
+  const get_transit1 = await pairAPI(
+    pairCanisterId,
+    'get_transit',
+    undefined,
+    identity
+  );
+  console.log(get_transit1, 'get_transit 1');
+  console.log(response, 'stake response');
   return response;
 };
 

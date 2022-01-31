@@ -31,7 +31,10 @@ import {
   get_current_price,
   //mint,
   get_reserves,
-  swap,
+  //swap,
+  //stake,
+  canisterAgentApi,
+  canisterAgent,
   //mint,
 } from '.';
 
@@ -416,10 +419,8 @@ test('mintx', async (t) => {
     t.truthy(false);
   }
 }); */
-
+/* 
 test('swap', async (t) => {
-  t.truthy(true);
-  return;
   try {
     const seedPhrase =
       'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
@@ -434,6 +435,63 @@ test('swap', async (t) => {
     );
 
     t.is(status, undefined);
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+}); */
+/* 
+test('stake', async (t) => {
+  try {
+    const seedPhrase =
+      'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await stake(
+      walletObj.identity,
+      'w6ozc-gaaaa-aaaaa-aaarq-cai',
+      'wzp7w-lyaaa-aaaaa-aaara-cai',
+      1666
+    );
+
+    t.is(status, undefined);
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+
+ */
+
+test('canisterAgentApi local', async (t) => {
+  try {
+    const status = await canisterAgentApi(
+      'rrkah-fqaaa-aaaaa-aaaaq-cai',
+      'add',
+      1,
+      undefined,
+      'http://127.0.0.1:8000'
+    );
+
+    t.is(status, BigInt(13));
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('canisterAgent local', async (t) => {
+  try {
+    const status = await canisterAgent({
+      canisterId: 'rrkah-fqaaa-aaaaa-aaaaq-cai',
+      method: 'add',
+      args: 1,
+      host: 'http://127.0.0.1:8000',
+    });
+
+    t.is(status, BigInt(14));
   } catch (error) {
     console.log(error);
     t.truthy(false);
