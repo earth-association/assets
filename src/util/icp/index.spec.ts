@@ -33,7 +33,7 @@ import {
   get_reserves,
   //swap,
   //stake,
-  canisterAgentApi,
+  //canisterAgentApi,
   canisterAgent,
   //mint,
 } from '.';
@@ -464,7 +464,7 @@ test('stake', async (t) => {
 
 
  */
-
+/* 
 test('canisterAgentApi local', async (t) => {
   try {
     const status = await canisterAgentApi(
@@ -496,7 +496,7 @@ test('canisterAgent local', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-});
+}); */
 
 test('canisterAgent remote', async (t) => {
   try {
