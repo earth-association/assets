@@ -475,7 +475,7 @@ test('canisterAgentApi local', async (t) => {
       'http://127.0.0.1:8000'
     );
 
-    t.is(status, BigInt(13));
+    t.is(status, BigInt(15));
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -491,7 +491,25 @@ test('canisterAgent local', async (t) => {
       host: 'http://127.0.0.1:8000',
     });
 
-    t.is(status, BigInt(14));
+    t.is(status, BigInt(16));
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('canisterAgent remote', async (t) => {
+  try {
+    const status = await canisterAgent({
+      canisterId: 'bzsui-sqaaa-aaaah-qce2a-cai',
+      method: 'bearer',
+      args: 'lwi75-7akor-uwiaa-aaaaa-b4arg-qaqca-aac6a-q',
+    });
+
+    t.is(
+      status.ok,
+      'afb264de8057a9ba7f79a51c80f99354004e686bb650172032aada5126e7f014'
+    );
   } catch (error) {
     console.log(error);
     t.truthy(false);
