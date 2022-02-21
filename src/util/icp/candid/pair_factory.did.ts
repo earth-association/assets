@@ -1,28 +1,30 @@
 export const idlFactory = ({ IDL }) => {
-  const Result = IDL.Variant({ Ok: IDL.Null, Err: IDL.Text });
+  const FactoryError = IDL.Variant({
+    CreatePairFailed: IDL.Text,
+    PairNotFound: IDL.Principal,
+    FailedToSetCap: IDL.Tuple(IDL.Principal, IDL.Text),
+    TokensAreSame: IDL.Null,
+  });
+  const Result = IDL.Variant({ Ok: IDL.Principal, Err: FactoryError });
   return IDL.Service({
-    create_pair: IDL.Func(
-      [IDL.Principal, IDL.Principal],
-      [IDL.Opt(IDL.Principal)],
+    create_lbp: IDL.Func(
+      [IDL.Principal, IDL.Principal, IDL.Tuple(IDL.Float64, IDL.Float64)],
+      [Result],
       []
     ),
+    create_pair: IDL.Func([IDL.Principal, IDL.Principal], [Result], []),
     get_all: IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     get_checksum: IDL.Func([], [IDL.Text], ['query']),
     get_controller: IDL.Func([], [IDL.Principal], ['query']),
     get_cycles: IDL.Func([IDL.Opt(IDL.Principal)], [IDL.Opt(IDL.Nat)], []),
     get_default_cap: IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
     get_fee_to: IDL.Func([], [IDL.Principal], ['query']),
-    get_pair: IDL.Func(
+    get_pairs: IDL.Func(
       [IDL.Principal, IDL.Principal],
-      [IDL.Opt(IDL.Principal)],
+      [IDL.Vec(IDL.Principal)],
       ['query']
     ),
     length: IDL.Func([], [IDL.Nat64], ['query']),
-    set_cap: IDL.Func(
-      [IDL.Principal, IDL.Principal, IDL.Opt(IDL.Nat)],
-      [Result],
-      []
-    ),
     set_controller: IDL.Func([IDL.Principal], [], []),
     set_default_cap: IDL.Func([IDL.Opt(IDL.Nat)], [], []),
     set_fee_to: IDL.Func([IDL.Principal], [], []),

@@ -606,7 +606,9 @@ export const create_pair = async (pair1: string, pair2: string) => {
     response = null;
   }
 
-  const p = response[0].toText();
+  console.log(response);
+
+  const p = response['Ok'] && response['Ok']?.toText();
   console.log(p, 'p create_pair');
 
   return p;
@@ -662,7 +664,7 @@ export const get_pair = async (pair1: string, pair2: string) => {
   let response: any;
 
   try {
-    response = await API.get_pair(
+    response = await API.get_pairs(
       Principal.fromText(pair1),
       Principal.fromText(pair2)
     );
