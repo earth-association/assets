@@ -8,6 +8,7 @@ const NNS_CANISTERS = {
   'renrk-eyaaa-aaaaa-aaada-cai': 'nns/genesis-token',
   'rdmx6-jaaaa-aaaaa-aaadq-cai': 'nns/identity',
   'qoctq-giaaa-aaaaa-aaaea-cai': 'nns/nns-ui',
+  'aanaa-xaaaa-aaaah-aaeiq-cai': 'dank/xtc',
 };
 
 export default NNS_CANISTERS;
