@@ -9,6 +9,7 @@ const NNS_CANISTERS = {
   'rdmx6-jaaaa-aaaaa-aaadq-cai': 'nns/identity',
   'qoctq-giaaa-aaaaa-aaaea-cai': 'nns/nns-ui',
   'aanaa-xaaaa-aaaah-aaeiq-cai': 'dank/xtc',
+  'qlttm-2yaaa-aaaak-qafvq-cai': 'earth/sdr',
 };
 
 export default NNS_CANISTERS;

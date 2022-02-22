@@ -528,7 +528,18 @@ test('call XTC canister and get expected response', async (t) => {
     'balanceOf',
     Principal.fromText(p)
   );
-  t.is(response, BigInt(7043271));
+  t.is(response, BigInt(3282797));
+});
+
+test('call SDR canister and get expected response', async (t) => {
+  const canisterId = 'qlttm-2yaaa-aaaak-qafvq-cai';
+  const p = 'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe';
+  const response: any = await canisterAgentApi(
+    canisterId,
+    'balanceOf',
+    Principal.fromText(p)
+  );
+  t.is(response, BigInt(0));
 });
 
 test('call XTC canister mint_by_icp and get Unauthorized response', async (t) => {
@@ -552,7 +563,7 @@ test('call Cycles canister get_icp_xdr_conversion_rate and get response', async 
   );
   t.like(response, {
     data: {
-      xdr_permyriad_per_icp: BigInt(133975),
+      xdr_permyriad_per_icp: BigInt(129162),
     },
   });
 });
