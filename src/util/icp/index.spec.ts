@@ -1,4 +1,4 @@
-import { Principal } from '@dfinity/principal';
+//import { Principal } from '@dfinity/principal';
 import { createWallet } from '@earthwallet/keyring';
 import test from 'ava';
 
@@ -35,8 +35,10 @@ import {
   //swap,
   //stake,
   //canisterAgentApi,
-  canisterAgent,
-  canisterAgentApi,
+  //canisterAgent,
+  //canisterAgentApi,
+  //getIdentityFromPem,
+  getEd25519KeyIdentityFromPem,
   //mint,
 } from '.';
 
@@ -501,7 +503,7 @@ test('canisterAgent local', async (t) => {
     t.truthy(false);
   }
 }); */
-
+/* 
 test('canisterAgent remote', async (t) => {
   try {
     const status = await canisterAgent({
@@ -566,4 +568,18 @@ test('call Cycles canister get_icp_xdr_conversion_rate and get response', async 
       xdr_permyriad_per_icp: BigInt(129162),
     },
   });
+});
+ */
+
+test('call pem and get exact identity principal', async (t) => {
+  const pem = `-----BEGIN PRIVATE KEY-----
+  MFMCAQEwBQYDK2VwBCIEIOagAuilvdmqRiXZhUSvRV2GlqDNRXNdzujnap6E3Jtt
+  oSMDIQBGmLFUoT/MCBucOb8Oe9zUD4uz2RfTQx5hH8JpdCer0w==
+  -----END PRIVATE KEY-----`;
+  const identity = getEd25519KeyIdentityFromPem(pem);
+
+  t.is(
+    identity.getPrincipal().toText(),
+    'yuvg2-2khcz-ztsa5-jw7wp-skye6-2ksrg-frffu-2cjz4-y6auu-lcsra-vqe'
+  );
 });

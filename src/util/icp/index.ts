@@ -22,6 +22,8 @@ import { Identity } from '@dfinity/agent';
 import { address_to_hex } from '@dfinity/rosetta-client';
 import { IDL } from '@dfinity/candid';
 import NNS_CANISTERS from './candid/nns';
+import Secp256k1KeyIdentity from '@earthwallet/keyring/build/main/util/icp/secpk256k1/identity';
+import { Ed25519KeyIdentity } from '@dfinity/identity';
 
 class CanisterActor extends Actor {
   [x: string]: (...args: unknown[]) => Promise<unknown>;
@@ -1114,3 +1116,63 @@ export const infiniteSwapAPI = async (
     }
   }
 };
+
+export const getEd25519KeyIdentityFromPem = (pem) => {
+  //https://github.com/Psychedelic/dfx-key/blob/cbbebb8419afa97a02861830b8ba598b4bf859da/plug.js
+  // GNU GENERAL PUBLIC LICENSE Version 3
+  pem = pem
+    .replace('-----BEGIN PRIVATE KEY-----', '')
+    .replace('-----END PRIVATE KEY-----', '')
+    .replace('\n', '')
+    .trim();
+
+  const raw = Buffer.from(pem, 'base64')
+    .toString('hex')
+    .replace('3053020101300506032b657004220420', '')
+    .replace('a123032100', '');
+
+  // including private key (32 bytes before public key)
+  // and public key (last 32 bytes)
+  const key = new Uint8Array(Buffer.from(raw, 'hex'));
+
+  const identity = Ed25519KeyIdentity.fromSecretKey(key);
+
+  return identity;
+};
+
+export function getSecp256k1IdentityFromPem(pem) {
+  //https://github.com/Psychedelic/dfx-key/blob/cbbebb8419afa97a02861830b8ba598b4bf859da/plug.js
+  // GNU GENERAL PUBLIC LICENSE Version 3
+
+  const PEM_BEGIN = '-----BEGIN PRIVATE KEY-----';
+  const PEM_END = '-----END PRIVATE KEY-----';
+
+  const PRIV_KEY_INIT =
+    '308184020100301006072a8648ce3d020106052b8104000a046d306b0201010420';
+
+  const KEY_SEPARATOR = 'a144034200';
+  pem = pem.replace(PEM_BEGIN, '');
+  pem = pem.replace(PEM_END, '');
+  pem = pem.replace('\n', '');
+
+  console.log(pem, 'pem');
+  const pemBuffer = Buffer.from(pem, 'base64');
+  const pemHex = pemBuffer.toString('hex');
+
+  console.log(pemHex, 'pemHex');
+  const keys = pemHex.replace(PRIV_KEY_INIT, '');
+  const [privateKey, publicKey] = keys.split(KEY_SEPARATOR);
+  console.log(privateKey, publicKey);
+  const identity = Secp256k1KeyIdentity.fromParsedJson([publicKey, privateKey]);
+
+  // CONFIRM
+
+  console.log('Principal: ', identity.getPrincipal().toText());
+
+  //const pair = identity.getKeyPair();
+
+  //console.log('Private key: ', toHexString(pair.secretKey));
+
+  //console.log('Public key: ', toHexString(pair.publicKey.toRaw()));
+  //return identity;
+}
