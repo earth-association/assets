@@ -609,10 +609,6 @@ test('addToken to sonic', async (t) => {
 });
 
 test('call WICP balanceOf', async (t) => {
-  const seedPhrase =
-    'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
-  const walletObj = await createWallet(seedPhrase, 'ICP');
-
   try {
     const status = await canisterAgent({
       canisterId: 'utozz-siaaa-aaaam-qaaxq-cai',
@@ -620,10 +616,9 @@ test('call WICP balanceOf', async (t) => {
       args: Principal.fromText(
         'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe'
       ),
-      fromIdentity: walletObj.identity,
     });
 
-    t.is(status, 'ok');
+    t.is(status, BigInt(10000));
   } catch (error) {
     console.log(error);
     t.truthy(false);
