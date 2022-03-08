@@ -1,4 +1,5 @@
 //import { Principal } from '@dfinity/principal';
+import { Principal } from '@dfinity/principal';
 import { createWallet } from '@earthwallet/keyring';
 import test from 'ava';
 
@@ -39,6 +40,7 @@ import {
   //canisterAgentApi,
   //getIdentityFromPem,
   getEd25519KeyIdentityFromPem,
+  canisterAgent,
   //mint,
 } from '.';
 
@@ -582,4 +584,48 @@ test('call pem and get exact identity principal', async (t) => {
     identity.getPrincipal().toText(),
     'yuvg2-2khcz-ztsa5-jw7wp-skye6-2ksrg-frffu-2cjz4-y6auu-lcsra-vqe'
   );
+});
+
+test('addToken to sonic', async (t) => {
+  t.truthy(true);
+  return;
+  const seedPhrase =
+    'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+  const walletObj = await createWallet(seedPhrase, 'ICP');
+
+  try {
+    const status = await canisterAgent({
+      canisterId: '3xwpq-ziaaa-aaaah-qcn4a-cai',
+      method: 'addToken',
+      args: Principal.fromText('qlttm-2yaaa-aaaak-qafvq-cai'),
+      fromIdentity: walletObj.identity,
+    });
+
+    t.is(status, 'ok');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call WICP balanceOf', async (t) => {
+  const seedPhrase =
+    'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+  const walletObj = await createWallet(seedPhrase, 'ICP');
+
+  try {
+    const status = await canisterAgent({
+      canisterId: 'utozz-siaaa-aaaam-qaaxq-cai',
+      method: 'balanceOf',
+      args: Principal.fromText(
+        'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe'
+      ),
+      fromIdentity: walletObj.identity,
+    });
+
+    t.is(status, 'ok');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
 });

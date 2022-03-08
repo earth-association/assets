@@ -9,6 +9,7 @@ const NNS_CANISTERS = {
   'rdmx6-jaaaa-aaaaa-aaadq-cai': 'nns/identity',
   'qoctq-giaaa-aaaaa-aaaea-cai': 'nns/nns-ui',
   'aanaa-xaaaa-aaaah-aaeiq-cai': 'dank/xtc',
+  'utozz-siaaa-aaaam-qaaxq-cai': 'dank/wicp',
   'qlttm-2yaaa-aaaak-qafvq-cai': 'earth/sdr',
 };
 
