@@ -561,8 +561,6 @@ export const stats = async (canisterId: string) => {
     response = null;
   }
 
-  console.log(response, 'stats');
-
   return response;
 };
 
@@ -574,8 +572,6 @@ export const get_reserves = async (canisterId: string) => {
     console.log(error);
     response = null;
   }
-
-  console.log(response, 'get_reserves');
 
   return response;
 };
@@ -608,10 +604,7 @@ export const create_pair = async (pair1: string, pair2: string) => {
     response = null;
   }
 
-  console.log(response);
-
   const p = response['Ok'] && response['Ok']?.toText();
-  console.log(p, 'p create_pair');
 
   return p;
 };
@@ -703,9 +696,6 @@ export const get_current_price = async (canisterId: string) => {
     response = null;
   }
 
-  console.log(response, 'get_current_price');
-
-  console.log(response);
   return response;
 };
 
@@ -740,7 +730,6 @@ export const transfer_from = async (
     response = null;
   }
 
-  console.log(response, 'transfer_from');
   return response;
 };
 
@@ -1155,24 +1144,19 @@ export function getSecp256k1IdentityFromPem(pem) {
   pem = pem.replace(PEM_END, '');
   pem = pem.replace('\n', '');
 
-  console.log(pem, 'pem');
   const pemBuffer = Buffer.from(pem, 'base64');
   const pemHex = pemBuffer.toString('hex');
 
-  console.log(pemHex, 'pemHex');
   const keys = pemHex.replace(PRIV_KEY_INIT, '');
   const [privateKey, publicKey] = keys.split(KEY_SEPARATOR);
-  console.log(privateKey, publicKey);
   const identity = Secp256k1KeyIdentity.fromParsedJson([publicKey, privateKey]);
 
   // CONFIRM
-
-  console.log('Principal: ', identity.getPrincipal().toText());
 
   //const pair = identity.getKeyPair();
 
   //console.log('Private key: ', toHexString(pair.secretKey));
 
   //console.log('Public key: ', toHexString(pair.publicKey.toRaw()));
-  //return identity;
+  return identity;
 }
