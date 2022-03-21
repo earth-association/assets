@@ -1,4 +1,13 @@
 export default ({ IDL }) => {
+  const IcpXdrConversionRate = IDL.Record({
+    xdr_permyriad_per_icp: IDL.Nat64,
+    timestamp_seconds: IDL.Nat64,
+  });
+  const IcpXdrConversionRateCertifiedResponse = IDL.Record({
+    certificate: IDL.Vec(IDL.Nat8),
+    data: IcpXdrConversionRate,
+    hash_tree: IDL.Vec(IDL.Nat8),
+  });
   const SetAuthorizedSubnetworkListArgs = IDL.Record({
     who: IDL.Opt(IDL.Principal),
     subnets: IDL.Vec(IDL.Principal),
@@ -20,6 +29,16 @@ export default ({ IDL }) => {
   });
   const Result = IDL.Variant({ Ok: CyclesResponse, Err: IDL.Text });
   return IDL.Service({
+    get_average_icp_xdr_conversion_rate: IDL.Func(
+      [],
+      [IcpXdrConversionRateCertifiedResponse],
+      ['query']
+    ),
+    get_icp_xdr_conversion_rate: IDL.Func(
+      [],
+      [IcpXdrConversionRateCertifiedResponse],
+      ['query']
+    ),
     set_authorized_subnetwork_list: IDL.Func(
       [SetAuthorizedSubnetworkListArgs],
       [],

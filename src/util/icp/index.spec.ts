@@ -1,3 +1,5 @@
+//import { Principal } from '@dfinity/principal';
+import { Principal } from '@dfinity/principal';
 import { createWallet } from '@earthwallet/keyring';
 import test from 'ava';
 
@@ -34,6 +36,10 @@ import {
   //swap,
   //stake,
   //canisterAgentApi,
+  //canisterAgent,
+  //canisterAgentApi,
+  //getIdentityFromPem,
+  getEd25519KeyIdentityFromPem,
   canisterAgent,
   //mint,
 } from '.';
@@ -166,7 +172,7 @@ test('createToken abc1', async (t) => {
   return;
   try {
     const status = await createToken('abc1');
-    t.is(status?.toString(), 'tfuft-aqaaa-aaaaa-aaaoq-cai');
+    t.is(status?.toString(), 'vszjv-naaaa-aaaaa-aaa3q-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -178,7 +184,7 @@ test('createToken abc2', async (t) => {
   return;
   try {
     const status = await createToken('abc2');
-    t.is(status?.toString(), 'tmxop-wyaaa-aaaaa-aaapa-cai');
+    t.is(status?.toString(), 'vvypb-ayaaa-aaaaa-aaa3a-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -192,12 +198,13 @@ test('get_token abc1', async (t) => {
     console.log('get_token');
     const status = await getToken('abc1');
 
-    t.is(status, 'tfuft-aqaaa-aaaaa-aaaoq-cai');
+    t.is(status, 'vszjv-naaaa-aaaaa-aaa3q-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 });
+
 test('get_token abc2', async (t) => {
   t.truthy(true);
   return;
@@ -205,7 +212,7 @@ test('get_token abc2', async (t) => {
     console.log('get_token');
     const status = await getToken('abc2');
 
-    t.is(status, 'tmxop-wyaaa-aaaaa-aaapa-cai');
+    t.is(status, 'vvypb-ayaaa-aaaaa-aaa3a-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -217,7 +224,7 @@ test('owner', async (t) => {
   return;
   try {
     console.log('owner');
-    const status = await owner('tfuft-aqaaa-aaaaa-aaaoq-cai');
+    const status = await owner('vszjv-naaaa-aaaaa-aaa3q-cai');
 
     t.is(
       status,
@@ -242,15 +249,15 @@ test('approve', async (t) => {
 
     const status = await approve(
       walletObj.identity,
-      'tmxop-wyaaa-aaaaa-aaapa-cai',
-      'wxns6-qiaaa-aaaaa-aaaqa-cai',
+      'vvypb-ayaaa-aaaaa-aaa3a-cai',
+      'u7xn3-ciaaa-aaaaa-aaa4a-cai',
       1234
     );
 
     await approve(
       walletObj.identity,
-      'tfuft-aqaaa-aaaaa-aaaoq-cai',
-      'wxns6-qiaaa-aaaaa-aaaqa-cai',
+      'vszjv-naaaa-aaaaa-aaa3q-cai',
+      'u7xn3-ciaaa-aaaaa-aaa4a-cai',
       1234
     );
 
@@ -288,16 +295,17 @@ test('create_pair', async (t) => {
   return;
   try {
     const status = await create_pair(
-      'tmxop-wyaaa-aaaaa-aaapa-cai',
-      'tfuft-aqaaa-aaaaa-aaaoq-cai'
+      'vvypb-ayaaa-aaaaa-aaa3a-cai',
+      'vszjv-naaaa-aaaaa-aaa3q-cai'
     );
 
-    t.is(status, 'wxns6-qiaaa-aaaaa-aaaqa-cai');
+    t.is(status, 'u7xn3-ciaaa-aaaaa-aaa4a-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
   }
 });
+
 test('get_all', async (t) => {
   t.truthy(true);
   return;
@@ -315,7 +323,7 @@ test('getMetadata', async (t) => {
   t.truthy(true);
   return;
   try {
-    const status = await getMetadata('tmxop-wyaaa-aaaaa-aaapa-cai');
+    const status = await getMetadata('vvypb-ayaaa-aaaaa-aaa3a-cai');
 
     t.like(status, { symbol: 'abc2', name: 'abc2' });
   } catch (error) {
@@ -329,11 +337,11 @@ test('get_pair', async (t) => {
   return;
   try {
     const status = await get_pair(
-      'tmxop-wyaaa-aaaaa-aaapa-cai',
-      'tfuft-aqaaa-aaaaa-aaaoq-cai'
+      'vvypb-ayaaa-aaaaa-aaa3a-cai',
+      'vszjv-naaaa-aaaaa-aaa3q-cai'
     );
 
-    t.is(status, 'wxns6-qiaaa-aaaaa-aaaqa-cai');
+    t.is(status, 'u7xn3-ciaaa-aaaaa-aaa4a-cai');
   } catch (error) {
     console.log(error);
     t.truthy(false);
@@ -343,7 +351,7 @@ test('get_current_price', async (t) => {
   t.truthy(true);
   return;
   try {
-    const status = await get_current_price('wxns6-qiaaa-aaaaa-aaaqa-cai');
+    const status = await get_current_price('u7xn3-ciaaa-aaaaa-aaa4a-cai');
 
     t.is(status[0], 1.2651828847481021);
   } catch (error) {
@@ -356,7 +364,7 @@ test('get_reserves', async (t) => {
   t.truthy(true);
   return;
   try {
-    const status = await get_reserves('wxns6-qiaaa-aaaaa-aaaqa-cai');
+    const status = await get_reserves('u7xn3-ciaaa-aaaaa-aaa4a-cai');
 
     t.like(status, {
       block_timestamp_last: 1540448708,
@@ -379,17 +387,17 @@ test('transfer_from', async (t) => {
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
     const status = await transfer_from(
-      'tmxop-wyaaa-aaaaa-aaapa-cai',
+      'vvypb-ayaaa-aaaaa-aaa3a-cai',
       1666,
       walletObj.identity,
-      'wxns6-qiaaa-aaaaa-aaaqa-cai'
+      'u7xn3-ciaaa-aaaaa-aaa4a-cai'
     );
 
     /*     await transfer_from(
-      'tfuft-aqaaa-aaaaa-aaaoq-cai',
+      'vszjv-naaaa-aaaaa-aaa3q-cai',
       1234,
       walletObj.identity,
-      'wxns6-qiaaa-aaaaa-aaaqa-cai'
+      'u7xn3-ciaaa-aaaaa-aaa4a-cai'
     );
  */
     t.is(status, undefined);
@@ -410,7 +418,7 @@ test('mintx', async (t) => {
 
     const status = await mint(
       walletObj.identity,
-      'wxns6-qiaaa-aaaaa-aaaqa-cai'
+      'u7xn3-ciaaa-aaaaa-aaa4a-cai'
     );
 
     t.is(status, undefined);
@@ -429,8 +437,8 @@ test('swap', async (t) => {
 
     const status = await swap(
       walletObj.identity,
-      'wxns6-qiaaa-aaaaa-aaaqa-cai',
-      'tmxop-wyaaa-aaaaa-aaapa-cai',
+      'u7xn3-ciaaa-aaaaa-aaa4a-cai',
+      'vvypb-ayaaa-aaaaa-aaa3a-cai',
       1666
     );
 
@@ -497,7 +505,7 @@ test('canisterAgent local', async (t) => {
     t.truthy(false);
   }
 }); */
-
+/* 
 test('canisterAgent remote', async (t) => {
   try {
     const status = await canisterAgent({
@@ -510,6 +518,107 @@ test('canisterAgent remote', async (t) => {
       status.ok,
       'afb264de8057a9ba7f79a51c80f99354004e686bb650172032aada5126e7f014'
     );
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call XTC canister and get expected response', async (t) => {
+  const canisterId = 'aanaa-xaaaa-aaaah-aaeiq-cai';
+  const p = 'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe';
+  const response: any = await canisterAgentApi(
+    canisterId,
+    'balanceOf',
+    Principal.fromText(p)
+  );
+  t.is(response, BigInt(3282797));
+});
+
+test('call SDR canister and get expected response', async (t) => {
+  const canisterId = 'qlttm-2yaaa-aaaak-qafvq-cai';
+  const p = 'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe';
+  const response: any = await canisterAgentApi(
+    canisterId,
+    'balanceOf',
+    Principal.fromText(p)
+  );
+  t.is(response, BigInt(0));
+});
+
+test('call XTC canister mint_by_icp and get Unauthorized response', async (t) => {
+  const canisterId = 'aanaa-xaaaa-aaaah-aaeiq-cai';
+  const response: any = await canisterAgentApi(canisterId, 'mint_by_icp', [
+    [],
+    2582842,
+  ]);
+  t.like(response, {
+    Err: {
+      Unauthorized: null,
+    },
+  });
+});
+
+test('call Cycles canister get_icp_xdr_conversion_rate and get response', async (t) => {
+  const canisterId = 'rkp4c-7iaaa-aaaaa-aaaca-cai';
+  const response: any = await canisterAgentApi(
+    canisterId,
+    'get_icp_xdr_conversion_rate'
+  );
+  t.like(response, {
+    data: {
+      xdr_permyriad_per_icp: BigInt(129162),
+    },
+  });
+});
+ */
+
+test('call pem and get exact identity principal', async (t) => {
+  const pem = `-----BEGIN PRIVATE KEY-----
+  MFMCAQEwBQYDK2VwBCIEIOagAuilvdmqRiXZhUSvRV2GlqDNRXNdzujnap6E3Jtt
+  oSMDIQBGmLFUoT/MCBucOb8Oe9zUD4uz2RfTQx5hH8JpdCer0w==
+  -----END PRIVATE KEY-----`;
+  const identity = getEd25519KeyIdentityFromPem(pem);
+
+  t.is(
+    identity.getPrincipal().toText(),
+    'yuvg2-2khcz-ztsa5-jw7wp-skye6-2ksrg-frffu-2cjz4-y6auu-lcsra-vqe'
+  );
+});
+
+test('addToken to sonic', async (t) => {
+  t.truthy(true);
+  return;
+  const seedPhrase =
+    'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+  const walletObj = await createWallet(seedPhrase, 'ICP');
+
+  try {
+    const status = await canisterAgent({
+      canisterId: '3xwpq-ziaaa-aaaah-qcn4a-cai',
+      method: 'addToken',
+      args: Principal.fromText('qlttm-2yaaa-aaaak-qafvq-cai'),
+      fromIdentity: walletObj.identity,
+    });
+
+    t.is(status, 'ok');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call WICP balanceOf', async (t) => {
+  try {
+    const status = await canisterAgent({
+      canisterId: 'utozz-siaaa-aaaam-qaaxq-cai',
+      method: 'balanceOf',
+      args: Principal.fromText(
+        'o7nwu-n6kuf-4afzp-ybcuf-346pr-odd54-damf5-v4pvc-4sexh-cabph-7qe'
+      ),
+    });
+
+    t.is(status, BigInt(10000));
   } catch (error) {
     console.log(error);
     t.truthy(false);
