@@ -41,6 +41,7 @@ import {
   //getIdentityFromPem,
   getEd25519KeyIdentityFromPem,
   canisterAgent,
+  getCanisterInfo,
   //mint,
 } from '.';
 
@@ -618,7 +619,23 @@ test('call WICP balanceOf', async (t) => {
       ),
     });
 
-    t.is(status, BigInt(10000));
+    t.is(status, BigInt(13000000));
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('get canister info for SDR', async (t) => {
+  try {
+    const response = await getCanisterInfo('qlttm-2yaaa-aaaak-qafvq-cai');
+
+    t.like(response, {
+      moduleHash:
+        '196ac5674f124d6dafd706ea6ce400a1507598dd4b63b40466b832e15d833f27',
+      subnet: 'opn46-zyspe-hhmyp-4zu6u-7sbrh-dok77-m7dch-im62f-vyimr-a3n2c-4ae',
+      controllers: ['mq2bi-vaaaa-aaaak-qaakq-cai'],
+    });
   } catch (error) {
     console.log(error);
     t.truthy(false);

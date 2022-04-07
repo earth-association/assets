@@ -24,10 +24,18 @@ import { IDL } from '@dfinity/candid';
 import NNS_CANISTERS from './candid/nns';
 import Secp256k1KeyIdentity from '@earthwallet/keyring/build/main/util/icp/secpk256k1/identity';
 import { Ed25519KeyIdentity } from '@dfinity/identity';
-
+import { blobFromText, blobFromUint8Array } from '@dfinity/candid';
+import { Certificate } from '@dfinity/agent';
+import cbor from 'borc';
 class CanisterActor extends Actor {
   [x: string]: (...args: unknown[]) => Promise<unknown>;
 }
+
+export const decoder = new cbor.Decoder({
+  tags: {
+    55799: (val: any) => val,
+  },
+} as any);
 
 const getSubAccountArray = (s) => {
   return Array(28)
@@ -1150,13 +1158,31 @@ export function getSecp256k1IdentityFromPem(pem) {
   const keys = pemHex.replace(PRIV_KEY_INIT, '');
   const [privateKey, publicKey] = keys.split(KEY_SEPARATOR);
   const identity = Secp256k1KeyIdentity.fromParsedJson([publicKey, privateKey]);
-
-  // CONFIRM
-
-  //const pair = identity.getKeyPair();
-
-  //console.log('Private key: ', toHexString(pair.secretKey));
-
-  //console.log('Public key: ', toHexString(pair.publicKey.toRaw()));
   return identity;
 }
+export const getCanisterInfo = async (canisterId: string) => {
+  const agent = new HttpAgent({ host: ICP_HOST, fetch });
+  const principal = blobFromUint8Array(
+    Principal.fromText(canisterId).toUint8Array()
+  );
+  const pathCommon = [blobFromText('canister'), principal];
+  const pathModuleHash = pathCommon.concat(blobFromText('module_hash'));
+  const pathControllers = pathCommon.concat(blobFromText('controllers'));
+
+  const res = await agent.readState(canisterId, {
+    paths: [pathModuleHash, pathControllers],
+  });
+
+  const cert = new Certificate(res, agent);
+  await cert.verify();
+  const moduleHash = cert.lookup(pathModuleHash)?.toString('hex');
+  const subnet = cert['cert'].delegation
+    ? Principal.fromUint8Array(cert['cert'].delegation.subnet_id).toText()
+    : null;
+  const certControllers = cert.lookup(pathControllers);
+  const controllers = decoder
+    .decodeFirst(certControllers)
+    .map((buf: Buffer) => Principal.fromUint8Array(buf).toText());
+
+  return { moduleHash, subnet, controllers };
+};
