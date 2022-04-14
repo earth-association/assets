@@ -641,3 +641,25 @@ test('get canister info for SDR', async (t) => {
     t.truthy(false);
   }
 });
+
+test('call aaaaa-aa with unauth and get canister_status as error', async (t) => {
+  try {
+    const seedPhrase =
+      'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await canisterAgent({
+      canisterId: 'aaaaa-aa',
+      method: 'canister_status',
+      fromIdentity: walletObj.identity,
+      args: {
+        canister_id: Principal.fromText('bso2y-jqaaa-aaaai-qjbda-cai'),
+      },
+    });
+
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Actor, HttpAgent } from '@dfinity/agent';
+import { Actor, CallConfig, HttpAgent } from '@dfinity/agent';
 import { sha224 } from '@dfinity/rosetta-client/lib/hash';
 import fetch from 'cross-fetch';
 
@@ -412,10 +412,38 @@ export const canisterAgentApi = async (
     }
   }
 
-  const API = Actor.createActor(candid?.default || candid?.idlFactory, {
-    agent,
-    canisterId: canisterId,
-  });
+  function transform(
+    _methodName: string,
+    args: unknown[],
+    _callConfig: CallConfig
+  ) {
+    const first = args[0] as any;
+    const MANAGEMENT_CANISTER_ID = Principal.fromText('aaaaa-aa');
+    let effectiveCanisterId = MANAGEMENT_CANISTER_ID;
+    if (first && typeof first === 'object' && first.canister_id) {
+      effectiveCanisterId = Principal.from(first.canister_id as unknown);
+    }
+    return { effectiveCanisterId };
+  }
+
+  let API;
+
+  if (canisterId === 'aaaaa-aa') {
+    API = Actor.createActor(candid?.default || candid?.idlFactory, {
+      agent,
+      canisterId: Principal.fromText(canisterId),
+      ...{
+        callTransform: transform,
+        queryTransform: transform,
+      },
+    });
+  } else {
+    API = Actor.createActor(candid?.default || candid?.idlFactory, {
+      agent,
+      canisterId: canisterId,
+    });
+  }
+
   let response: any;
   try {
     if (args === undefined) {
