@@ -35,8 +35,8 @@ export const getTransferGasFees = async (
     `https://polygon-mainnet.g.alchemy.com/v2/${API_KEY}`
   );
   try {
-    const respons2 = await web3.eth.getMaxPriorityFeePerGas();
-    console.log(respons2, 'getMaxPriorityFeePerGas');
+    //const respons2 = await web3.eth.getMaxPriorityFeePerGas();
+    //console.log(respons2, 'getMaxPriorityFeePerGas');
   } catch (error) {
     console.log(error);
   }
@@ -70,6 +70,5 @@ export const getTransferGasFees = async (
   } catch (error) {
     console.log(error);
   }
-  console.log(gasEstimates);
   return gasEstimates;
 };
