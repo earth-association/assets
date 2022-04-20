@@ -395,21 +395,24 @@ export const canisterAgentApi = async (
   }
 
   let candid: any;
-
-  if (host != undefined) {
-    const js = await fetchJsFromLocalCanisterId(canisterId, host);
-    const dataUri =
-      'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
-    candid = await eval('import("' + dataUri + '")');
-  } else {
-    if (!(canisterId in NNS_CANISTERS)) {
-      const js = await fetchJsFromCanisterId(canisterId);
+  try {
+    if (host != undefined) {
+      const js = await fetchJsFromLocalCanisterId(canisterId, host);
       const dataUri =
         'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
       candid = await eval('import("' + dataUri + '")');
     } else {
-      candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+      if (!(canisterId in NNS_CANISTERS)) {
+        const js = await fetchJsFromCanisterId(canisterId);
+        const dataUri =
+          'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
+        candid = await eval('import("' + dataUri + '")');
+      } else {
+        candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+      }
     }
+  } catch (_error) {
+    return { type: 'error', message: _error };
   }
 
   function transform(

@@ -7,10 +7,10 @@ test('create wallet for eth or matic', async (t) => {
   try {
     const TEST_MNE_1 =
       'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
-
+    /* 
     const TEST_MNE2 =
       'crystal wealth scan disagree moment note athlete medal cube notable pole miss';
-    const wallet = await createWallet(TEST_MNE_1, 'MATIC');
+    */ const wallet = await createWallet(TEST_MNE_1, 'MATIC');
     console.log(wallet.address);
     t.is(wallet.address, '0x29bc7f4bfc7301b3ddb5c9c4348360fc0ad52ca8');
     return;
