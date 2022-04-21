@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Actor, CallConfig, HttpAgent } from '@dfinity/agent';
+import { Actor, HttpAgent } from '@dfinity/agent';
 import { sha224 } from '@dfinity/rosetta-client/lib/hash';
 import fetch from 'cross-fetch';
 
@@ -415,11 +415,7 @@ export const canisterAgentApi = async (
     return { type: 'error', message: _error };
   }
 
-  function transform(
-    _methodName: string,
-    args: unknown[],
-    _callConfig: CallConfig
-  ) {
+  function transform(_methodName: string, args: unknown[]) {
     const first = args[0] as any;
     const MANAGEMENT_CANISTER_ID = Principal.fromText('aaaaa-aa');
     let effectiveCanisterId = MANAGEMENT_CANISTER_ID;
