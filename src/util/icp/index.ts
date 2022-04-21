@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Actor, HttpAgent } from '@dfinity/agent';
+import { Actor, CallConfig, HttpAgent } from '@dfinity/agent';
 import { sha224 } from '@dfinity/rosetta-client/lib/hash';
 import fetch from 'cross-fetch';
 
@@ -24,10 +24,18 @@ import { IDL } from '@dfinity/candid';
 import NNS_CANISTERS from './candid/nns';
 import Secp256k1KeyIdentity from '@earthwallet/keyring/build/main/util/icp/secpk256k1/identity';
 import { Ed25519KeyIdentity } from '@dfinity/identity';
-
+import { blobFromText, blobFromUint8Array } from '@dfinity/candid';
+import { Certificate } from '@dfinity/agent';
+import cbor from 'borc';
 class CanisterActor extends Actor {
   [x: string]: (...args: unknown[]) => Promise<unknown>;
 }
+
+export const decoder = new cbor.Decoder({
+  tags: {
+    55799: (val: any) => val,
+  },
+} as any);
 
 const getSubAccountArray = (s) => {
   return Array(28)
@@ -387,27 +395,58 @@ export const canisterAgentApi = async (
   }
 
   let candid: any;
-
-  if (host != undefined) {
-    const js = await fetchJsFromLocalCanisterId(canisterId, host);
-    const dataUri =
-      'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
-    candid = await eval('import("' + dataUri + '")');
-  } else {
-    if (!(canisterId in NNS_CANISTERS)) {
-      const js = await fetchJsFromCanisterId(canisterId);
+  try {
+    if (host != undefined) {
+      const js = await fetchJsFromLocalCanisterId(canisterId, host);
       const dataUri =
         'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
       candid = await eval('import("' + dataUri + '")');
     } else {
-      candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+      if (!(canisterId in NNS_CANISTERS)) {
+        const js = await fetchJsFromCanisterId(canisterId);
+        const dataUri =
+          'data:text/javascript;charset=utf-8,' + encodeURIComponent(js);
+        candid = await eval('import("' + dataUri + '")');
+      } else {
+        candid = await import(`./candid/${NNS_CANISTERS[canisterId]}.did`);
+      }
     }
+  } catch (_error) {
+    return { type: 'error', message: _error };
   }
 
-  const API = Actor.createActor(candid?.default || candid?.idlFactory, {
-    agent,
-    canisterId: canisterId,
-  });
+  function transform(
+    _methodName: string,
+    args: unknown[],
+    _callConfig: CallConfig
+  ) {
+    const first = args[0] as any;
+    const MANAGEMENT_CANISTER_ID = Principal.fromText('aaaaa-aa');
+    let effectiveCanisterId = MANAGEMENT_CANISTER_ID;
+    if (first && typeof first === 'object' && first.canister_id) {
+      effectiveCanisterId = Principal.from(first.canister_id as unknown);
+    }
+    return { effectiveCanisterId };
+  }
+
+  let API;
+
+  if (canisterId === 'aaaaa-aa') {
+    API = Actor.createActor(candid?.default || candid?.idlFactory, {
+      agent,
+      canisterId: Principal.fromText(canisterId),
+      ...{
+        callTransform: transform,
+        queryTransform: transform,
+      },
+    });
+  } else {
+    API = Actor.createActor(candid?.default || candid?.idlFactory, {
+      agent,
+      canisterId: canisterId,
+    });
+  }
+
   let response: any;
   try {
     if (args === undefined) {
@@ -561,8 +600,6 @@ export const stats = async (canisterId: string) => {
     response = null;
   }
 
-  console.log(response, 'stats');
-
   return response;
 };
 
@@ -574,8 +611,6 @@ export const get_reserves = async (canisterId: string) => {
     console.log(error);
     response = null;
   }
-
-  console.log(response, 'get_reserves');
 
   return response;
 };
@@ -608,10 +643,7 @@ export const create_pair = async (pair1: string, pair2: string) => {
     response = null;
   }
 
-  console.log(response);
-
   const p = response['Ok'] && response['Ok']?.toText();
-  console.log(p, 'p create_pair');
 
   return p;
 };
@@ -703,9 +735,6 @@ export const get_current_price = async (canisterId: string) => {
     response = null;
   }
 
-  console.log(response, 'get_current_price');
-
-  console.log(response);
   return response;
 };
 
@@ -740,7 +769,6 @@ export const transfer_from = async (
     response = null;
   }
 
-  console.log(response, 'transfer_from');
   return response;
 };
 
@@ -1155,24 +1183,37 @@ export function getSecp256k1IdentityFromPem(pem) {
   pem = pem.replace(PEM_END, '');
   pem = pem.replace('\n', '');
 
-  console.log(pem, 'pem');
   const pemBuffer = Buffer.from(pem, 'base64');
   const pemHex = pemBuffer.toString('hex');
 
-  console.log(pemHex, 'pemHex');
   const keys = pemHex.replace(PRIV_KEY_INIT, '');
   const [privateKey, publicKey] = keys.split(KEY_SEPARATOR);
-  console.log(privateKey, publicKey);
   const identity = Secp256k1KeyIdentity.fromParsedJson([publicKey, privateKey]);
-
-  // CONFIRM
-
-  console.log('Principal: ', identity.getPrincipal().toText());
-
-  //const pair = identity.getKeyPair();
-
-  //console.log('Private key: ', toHexString(pair.secretKey));
-
-  //console.log('Public key: ', toHexString(pair.publicKey.toRaw()));
-  //return identity;
+  return identity;
 }
+export const getCanisterInfo = async (canisterId: string) => {
+  const agent = new HttpAgent({ host: ICP_HOST, fetch });
+  const principal = blobFromUint8Array(
+    Principal.fromText(canisterId).toUint8Array()
+  );
+  const pathCommon = [blobFromText('canister'), principal];
+  const pathModuleHash = pathCommon.concat(blobFromText('module_hash'));
+  const pathControllers = pathCommon.concat(blobFromText('controllers'));
+
+  const res = await agent.readState(canisterId, {
+    paths: [pathModuleHash, pathControllers],
+  });
+
+  const cert = new Certificate(res, agent);
+  await cert.verify();
+  const moduleHash = cert.lookup(pathModuleHash)?.toString('hex');
+  const subnet = cert['cert'].delegation
+    ? Principal.fromUint8Array(cert['cert'].delegation.subnet_id).toText()
+    : null;
+  const certControllers = cert.lookup(pathControllers);
+  const controllers = decoder
+    .decodeFirst(certControllers)
+    .map((buf: Buffer) => Principal.fromUint8Array(buf).toText());
+
+  return { moduleHash, subnet, controllers };
+};

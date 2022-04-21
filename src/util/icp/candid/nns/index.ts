@@ -1,4 +1,5 @@
 const NNS_CANISTERS = {
+  'aaaaa-aa': 'nns/management',
   'rwlgt-iiaaa-aaaaa-aaaaa-cai': 'nns/registry',
   'rrkah-fqaaa-aaaaa-aaaaq-cai': 'nns/governance',
   'ryjl3-tyaaa-aaaaa-aaaba-cai': 'nns/ledger',
