@@ -663,3 +663,62 @@ test('call aaaaa-aa with unauth and get canister_status as error', async (t) => 
     t.truthy(false);
   }
 });
+
+test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
+  try {
+    const seedPhrase =
+      'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await canisterAgent({
+      canisterId: 'vvimt-yaaaa-aaaak-qajga-cai',
+      method: 'createListing',
+      fromIdentity: walletObj.identity,
+      args: {
+        groupIdentifer: [],
+        nft: {
+          nftCanister: Principal.fromText('q4uh3-saaaa-aaaak-qaj2a-cai'),
+          nftIdentifier: { nat32: BigInt(79207) },
+        },
+        price: [100003],
+        symbol: { icp: null },
+      },
+    });
+
+    console.log(status);
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+/* 
+test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
+  try {
+    const seedPhrase =
+      'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await canisterAgent({
+      canisterId: 'vvimt-yaaaa-aaaak-qajga-cai',
+      method: 'transfer',
+      fromIdentity: walletObj.identity,
+      args: {
+        groupIdentifer: [],
+        nft: {
+          nftCanister: Principal.fromText('q4uh3-saaaa-aaaak-qaj2a-cai'),
+          nftIdentifier: {
+            nat32: BigInt(79206),
+          },
+        },
+        price: [],
+        symbol: { icp: null },
+      },
+    });
+    console.log(status);
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+}); */
