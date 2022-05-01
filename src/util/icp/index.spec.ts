@@ -665,6 +665,8 @@ test('call aaaaa-aa with unauth and get canister_status as error', async (t) => 
 });
 
 test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
+  t.truthy(true);
+  return;
   try {
     const seedPhrase =
       'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
@@ -678,9 +680,9 @@ test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
         groupIdentifer: [],
         nft: {
           nftCanister: Principal.fromText('q4uh3-saaaa-aaaak-qaj2a-cai'),
-          nftIdentifier: { nat32: BigInt(79207) },
+          nftIdentifier: { nat32: BigInt(79209) },
         },
-        price: [100003],
+        price: [10000000],
         symbol: { icp: null },
       },
     });
@@ -692,27 +694,31 @@ test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
     t.truthy(false);
   }
 });
-/* 
-test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
+
+test('call q4uh3-saaaa-aaaak-qaj2a-cai and safeTransferFrom', async (t) => {
+  t.truthy(true);
+  return;
   try {
     const seedPhrase =
       'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
     const status = await canisterAgent({
-      canisterId: 'vvimt-yaaaa-aaaak-qajga-cai',
-      method: 'transfer',
+      canisterId: 'q4uh3-saaaa-aaaak-qaj2a-cai',
+      method: 'safeTransferFrom',
       fromIdentity: walletObj.identity,
       args: {
-        groupIdentifer: [],
-        nft: {
-          nftCanister: Principal.fromText('q4uh3-saaaa-aaaak-qaj2a-cai'),
-          nftIdentifier: {
-            nat32: BigInt(79206),
-          },
+        to: {
+          address:
+            '07b1b5f1f023eaa457a6d63fe00cea8cae5c943461350de455cb2d1f3dec8992',
         },
-        price: [],
-        symbol: { icp: null },
+        notify: false,
+        tokenIndex: 79208,
+        from: {
+          address:
+            '02f2326544f2040d3985e31db5e7021402c541d3cde911cd20e951852ee4da47',
+        },
+        memo: [],
       },
     });
     console.log(status);
@@ -721,4 +727,6 @@ test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
     console.log(error);
     t.truthy(false);
   }
-}); */
+});
+
+//https://ic.rocks/principal/vsjkh-vyaaa-aaaak-qajgq-cai#getNFTsByUser
