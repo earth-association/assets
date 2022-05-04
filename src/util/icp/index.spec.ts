@@ -2,6 +2,7 @@
 import { Principal } from '@dfinity/principal';
 import { createWallet } from '@earthwallet/keyring';
 import test from 'ava';
+import SQUARE_MNE from './test';
 
 /* 
 import { createWallet } from '@earthwallet/keyring';
@@ -665,8 +666,6 @@ test('call aaaaa-aa with unauth and get canister_status as error', async (t) => 
 });
 
 test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
-  t.truthy(true);
-  return;
   try {
     const seedPhrase =
       'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
@@ -679,10 +678,10 @@ test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
       args: {
         groupIdentifer: [],
         nft: {
-          nftCanister: Principal.fromText('q4uh3-saaaa-aaaak-qaj2a-cai'),
-          nftIdentifier: { nat32: BigInt(79209) },
+          nftCanister: Principal.fromText('brviu-eyaaa-aaaak-qakqq-cai'),
+          nftIdentifier: { nat32: 5 },
         },
-        price: [10000000],
+        price: [1000000],
         symbol: { icp: null },
       },
     });
@@ -719,6 +718,116 @@ test('call q4uh3-saaaa-aaaak-qaj2a-cai and safeTransferFrom', async (t) => {
             '02f2326544f2040d3985e31db5e7021402c541d3cde911cd20e951852ee4da47',
         },
         memo: [],
+      },
+    });
+    console.log(status);
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call vvimt-yaaaa-aaaak-qajga-cai and startPurchase', async (t) => {
+  t.truthy(true);
+  return;
+  try {
+    const seedPhrase = SQUARE_MNE;
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await canisterAgent({
+      canisterId: 'vvimt-yaaaa-aaaak-qajga-cai',
+      method: 'startPurchase',
+      fromIdentity: walletObj.identity,
+      args: {
+        nft: {
+          nftCanister: Principal.fromText('brviu-eyaaa-aaaak-qakqq-cai'),
+          nftIdentifier: {
+            nat32: 0,
+          },
+        },
+      },
+    });
+    console.log(status);
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call vvimt-yaaaa-aaaak-qajga-cai and settlePurchase', async (t) => {
+  t.truthy(true);
+  return;
+  try {
+    const seedPhrase = SQUARE_MNE;
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await canisterAgent({
+      canisterId: 'vvimt-yaaaa-aaaak-qajga-cai',
+      method: 'settlePurchase',
+      fromIdentity: walletObj.identity,
+      args: 18,
+    });
+    console.log(status);
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call brviu-eyaaa-aaaak-qakqq-cai and mintNFT', async (t) => {
+  t.truthy(true);
+  return;
+  try {
+    const seedPhrase =
+      'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+
+    const status = await canisterAgent({
+      canisterId: 'brviu-eyaaa-aaaak-qakqq-cai',
+      method: 'mintNFT',
+      fromIdentity: walletObj.identity,
+      args: {
+        to: {
+          address:
+            '0ba1b7b1643929210dc41a8afbe031bd1b5e81dbc8e3b3b64978f5f743f058c3',
+        },
+        metadata: [],
+      },
+    });
+    console.log(status);
+    t.is(status.type, 'error');
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+test('call vsjkh-vyaaa-aaaak-qajgq-cai and createCollection', async (t) => {
+  t.truthy(true);
+  return;
+  try {
+    const seedPhrase =
+      'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
+    const walletObj = await createWallet(seedPhrase, 'ICP');
+    const society = 'hello';
+    const status = await canisterAgent({
+      canisterId: 'vsjkh-vyaaa-aaaak-qajgq-cai',
+      method: 'createCollection',
+      fromIdentity: walletObj.identity,
+      args: {
+        fee: 2,
+        url: `${society}-collection-${Math.floor(Math.random() * 696969)}`,
+        drop: [],
+        meta: [],
+        name: `${society} Collection`,
+        nsfw: [],
+        description: `The ${society} Collection is a collection of ${society} works.`,
+        template: [],
+        category: [],
+        image: [],
       },
     });
     console.log(status);
