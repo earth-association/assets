@@ -2,8 +2,8 @@
 import { Principal } from '@dfinity/principal';
 import { createWallet } from '@earthwallet/keyring';
 import test from 'ava';
-import SQUARE_MNE from './test';
-
+//import SQUARE_MNE from './test';
+const SQUARE_MNE = '';
 /* 
 import { createWallet } from '@earthwallet/keyring';
 
