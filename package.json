@@ -1,6 +1,6 @@
 {
   "name": "@earthwallet/assets",
-  "version": "0.3.28",
+  "version": "0.3.29",
   "description": "Secure assets fetching and transfer functions for Earth Wallet",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",

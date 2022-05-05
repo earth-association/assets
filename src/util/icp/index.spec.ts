@@ -905,3 +905,22 @@ test('call vsjkh-vyaaa-aaaak-qajgq-cai and createCollection', async (t) => {
 //dxn2z-niaaa-aaaak-qak5q-cai
 
 //https://ic.rocks/principal/vsjkh-vyaaa-aaaak-qajgq-cai#getNFTsByUser
+
+test('canisterAgentApi qvhpv-4qaaa-aaaaa-aaagq-cai local', async (t) => {
+  t.truthy(true);
+  return;
+  try {
+    const status = await canisterAgent({
+      canisterId: 'qvhpv-4qaaa-aaaaa-aaagq-cai',
+      method: 'availableCycles',
+      args: undefined,
+      fromIdentity: undefined,
+      host: 'http://127.0.0.1:8000',
+    });
+    console.log(status);
+    t.is(status, BigInt(500000000000));
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
