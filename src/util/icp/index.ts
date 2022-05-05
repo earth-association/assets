@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Actor, HttpAgent } from '@dfinity/agent';
+import { Actor, HttpAgent, ActorSubclass } from '@dfinity/agent';
 import { sha224 } from '@dfinity/rosetta-client/lib/hash';
 import fetch from 'cross-fetch';
 
@@ -285,7 +285,27 @@ export async function fetchJsFromLocalCanisterId(
   const url = `${host}/_/candid?canisterId=${canisterId}&format=js`;
   const response = await fetch(url);
   if (!response.ok) {
-    return undefined;
+    const common_interface: IDL.InterfaceFactory = ({ IDL }) =>
+      IDL.Service({
+        __get_candid_interface_tmp_hack: IDL.Func([], [IDL.Text], ['query']),
+      });
+    const agent = await Promise.resolve(
+      new HttpAgent({
+        host: host ? host : ICP_HOST,
+        fetch,
+      })
+    ).then(async (ag) => {
+      await ag.fetchRootKey();
+      return ag;
+    });
+    const actor: ActorSubclass = Actor.createActor(common_interface, {
+      agent,
+      canisterId,
+    });
+    const candid_source =
+      (await actor.__get_candid_interface_tmp_hack()) as string;
+    const js = candidToJs(candid_source);
+    return js;
   }
   return response.text();
 }
@@ -412,6 +432,7 @@ export const canisterAgentApi = async (
       }
     }
   } catch (_error) {
+    console.log({ type: 'error', message: _error });
     return { type: 'error', message: _error };
   }
 
