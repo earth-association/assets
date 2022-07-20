@@ -1653,6 +1653,11 @@
   dependencies:
     defer-to-connect "^1.0.1"
 
+"@thirdweb-dev/contracts@^2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/contracts/-/contracts-2.4.0.tgz#081e31d49deda002d0cb713f8d31be69c3816593"
+  integrity sha512-ItYPCuiPPyI1RY5QzrxFSL7/xxVm2OuCWZ07ObsDI4e5q9dZt///UlO8KY9jjoDOTaOQ6W/6CkvClFJ4kRRW1w==
+
 "@tokenizer/token@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@tokenizer/token/-/token-0.1.1.tgz#f0d92c12f87079ddfd1b29f614758b9696bc29e3"

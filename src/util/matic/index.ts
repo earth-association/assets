@@ -18,13 +18,15 @@ export const getBalance = async (address) => {
     data: data,
   };
 
-  axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  let serverRes;
+  try {
+    const response = await axios(config);
+    serverRes = response.data;
+  } catch (error) {
+    serverRes = error;
+  }
+
+  return serverRes;
 };
 
 export const getTransferGasFees = async (

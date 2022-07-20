@@ -1,4 +1,4 @@
-/* import test from 'ava';
+import test from 'ava';
 import { getTransferGasFees } from '.';
 
 test('getTransferGasFees', async (t) => {
@@ -12,4 +12,3 @@ test('getTransferGasFees', async (t) => {
     t.truthy(false);
   }
 });
- */

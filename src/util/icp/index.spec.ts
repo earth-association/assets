@@ -679,7 +679,7 @@ test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
       'open jelly jeans corn ketchup supreme brief element armed lens vault weather original scissors rug priority vicious lesson raven spot gossip powder person volcano';
     const walletObj = await createWallet(seedPhrase, 'ICP');
     const resp = await canisterAgent({
-      canisterId: 'dxn2z-niaaa-aaaak-qak5q-cai',
+      canisterId: 'jnwhv-paaaa-aaaak-qalea-cai',
       method: 'setApprovalForAll',
       fromIdentity: walletObj?.identity,
       args: {
@@ -695,7 +695,7 @@ test('call vvimt-yaaaa-aaaak-qajga-cai auth and createListing', async (t) => {
       args: {
         groupIdentifier: [],
         nft: {
-          nftCanister: Principal.fromText('dxn2z-niaaa-aaaak-qak5q-cai'),
+          nftCanister: Principal.fromText('jnwhv-paaaa-aaaak-qalea-cai'),
           nftIdentifier: { nat32: 2 },
         },
         price: 1000000,
@@ -758,7 +758,7 @@ test('call vvimt-yaaaa-aaaak-qajga-cai and startPurchase', async (t) => {
       fromIdentity: walletObj.identity,
       args: {
         nft: {
-          nftCanister: Principal.fromText('dxn2z-niaaa-aaaak-qak5q-cai'),
+          nftCanister: Principal.fromText('jnwhv-paaaa-aaaak-qalea-cai'),
           nftIdentifier: {
             nat32: 0,
           },
@@ -794,7 +794,7 @@ test('call vvimt-yaaaa-aaaak-qajga-cai and settlePurchase', async (t) => {
   }
 });
 
-test('call dxn2z-niaaa-aaaak-qak5q-cai and mintNFT', async (t) => {
+test('call jnwhv-paaaa-aaaak-qalea-cai and mintNFT', async (t) => {
   t.truthy(true);
   return;
   try {
@@ -803,7 +803,7 @@ test('call dxn2z-niaaa-aaaak-qak5q-cai and mintNFT', async (t) => {
     const walletObj = await createWallet(seedPhrase, 'ICP');
 
     const status = await canisterAgent({
-      canisterId: 'dxn2z-niaaa-aaaak-qak5q-cai',
+      canisterId: 'jnwhv-paaaa-aaaak-qalea-cai',
       method: 'mintNFT',
       fromIdentity: walletObj.identity,
       args: {
@@ -815,7 +815,7 @@ test('call dxn2z-niaaa-aaaak-qak5q-cai and mintNFT', async (t) => {
       },
     });
     await canisterAgent({
-      canisterId: 'dxn2z-niaaa-aaaak-qak5q-cai',
+      canisterId: 'jnwhv-paaaa-aaaak-qalea-cai',
       method: 'mintNFT',
       fromIdentity: walletObj.identity,
       args: {
@@ -827,7 +827,7 @@ test('call dxn2z-niaaa-aaaak-qak5q-cai and mintNFT', async (t) => {
       },
     });
     await canisterAgent({
-      canisterId: 'dxn2z-niaaa-aaaak-qak5q-cai',
+      canisterId: 'jnwhv-paaaa-aaaak-qalea-cai',
       method: 'mintNFT',
       fromIdentity: walletObj.identity,
       args: {
@@ -839,7 +839,7 @@ test('call dxn2z-niaaa-aaaak-qak5q-cai and mintNFT', async (t) => {
       },
     });
     await canisterAgent({
-      canisterId: 'dxn2z-niaaa-aaaak-qak5q-cai',
+      canisterId: 'jnwhv-paaaa-aaaak-qalea-cai',
       method: 'mintNFT',
       fromIdentity: walletObj.identity,
       args: {
@@ -851,7 +851,7 @@ test('call dxn2z-niaaa-aaaak-qak5q-cai and mintNFT', async (t) => {
       },
     });
     await canisterAgent({
-      canisterId: 'dxn2z-niaaa-aaaak-qak5q-cai',
+      canisterId: 'jnwhv-paaaa-aaaak-qalea-cai',
       method: 'mintNFT',
       fromIdentity: walletObj.identity,
       args: {
@@ -883,7 +883,7 @@ test('call vsjkh-vyaaa-aaaak-qajgq-cai and createCollection', async (t) => {
       method: 'createCollection',
       fromIdentity: walletObj.identity,
       args: {
-        fee: 2,
+        fee: 20,
         url: `${society}-collection-${Math.floor(Math.random() * 696969)}`,
         drop: [],
         meta: [],
@@ -902,7 +902,7 @@ test('call vsjkh-vyaaa-aaaak-qajgq-cai and createCollection', async (t) => {
     t.truthy(false);
   }
 });
-//dxn2z-niaaa-aaaak-qak5q-cai
+//jnwhv-paaaa-aaaak-qalea-cai
 
 //https://ic.rocks/principal/vsjkh-vyaaa-aaaak-qajgq-cai#getNFTsByUser
 
@@ -914,6 +914,30 @@ test('canisterAgentApi qvhpv-4qaaa-aaaaa-aaagq-cai local', async (t) => {
       canisterId: 'qvhpv-4qaaa-aaaaa-aaagq-cai',
       method: 'availableCycles',
       args: undefined,
+      fromIdentity: undefined,
+      host: 'http://127.0.0.1:8000',
+    });
+    console.log(status);
+    t.is(status, BigInt(500000000000));
+  } catch (error) {
+    console.log(error);
+    t.truthy(false);
+  }
+});
+
+//getNFTsWithPermissions
+
+test('canisterAgentApi getNFTsWithPermissions local', async (t) => {
+  t.truthy(true);
+  return;
+  try {
+    const status = await canisterAgent({
+      canisterId: 'q4eej-kyaaa-aaaaa-aaaha-cai',
+      method: 'getNFTsWithPermissions',
+      args: [
+        Principal.fromText('q4eej-kyaaa-aaaaa-aaaha-cai'),
+        { offset: 0, limit: 10 },
+      ],
       fromIdentity: undefined,
       host: 'http://127.0.0.1:8000',
     });

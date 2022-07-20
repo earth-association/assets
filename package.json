@@ -46,6 +46,7 @@
     "@dfinity/principal": "^0.9.3",
     "@dfinity/rosetta-client": "^0.5.2",
     "@earthwallet/keyring": "^0.2.11",
+    "@thirdweb-dev/contracts": "^2.4.0",
     "borc": "^3.0.0"
   },
   "devDependencies": {

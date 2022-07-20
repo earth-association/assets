@@ -19,7 +19,7 @@ export const getTransferGasFees = async (
     const history = await web3.eth.getFeeHistory(
       historicalBlocks,
       'latest',
-      [35, 60, 90, 100]
+      [20, 60, 80, 90]
     );
     const { reward, baseFeePerGas, gasUsedRatio } = history;
     const oldestBlock = Number(history.oldestBlock);
